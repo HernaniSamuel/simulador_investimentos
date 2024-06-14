@@ -41,7 +41,7 @@ class CarteiraManual(models.Model):
     valor_em_dinheiro = models.FloatField()
     valor_total = models.FloatField()
     valor_ativos = models.FloatField()
-    indicadores = models.ManyToManyField()
+    indicadores = models.ManyToManyField(Indicador)
     moeda_base = models.CharField(max_length=10)
 
 

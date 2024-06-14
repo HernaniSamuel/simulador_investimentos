@@ -76,10 +76,15 @@ WSGI_APPLICATION = 'simuladorinvestimentos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',      # O nome do banco de dados que você criou
+        'USER': 'postgres',        # Seu usuário PostgreSQL
+        'PASSWORD': 'hernanipostgreesql7',   # A senha do usuário PostgreSQL
+        'HOST': 'localhost',       # Host do banco de dados
+        'PORT': '5432',            # Porta padrão do PostgreSQL
     }
 }
+
 
 
 # Password validation
