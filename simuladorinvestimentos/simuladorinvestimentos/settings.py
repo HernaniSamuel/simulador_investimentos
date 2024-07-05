@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'simulador',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'simuladorinvestimentos.urls'
@@ -55,7 +64,7 @@ ROOT_URLCONF = 'simuladorinvestimentos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR / 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,15 +86,39 @@ WSGI_APPLICATION = 'simuladorinvestimentos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydatabase',      # O nome do banco de dados que você criou
-        'USER': 'postgres',        # Seu usuário PostgreSQL
-        'PASSWORD': 'hernanipostgreesql7',   # A senha do usuário PostgreSQL
-        'HOST': 'localhost',       # Host do banco de dados
-        'PORT': '5432',            # Porta padrão do PostgreSQL
+        'NAME': 'mydatabase',  # O nome do banco de dados que você criou
+        'USER': 'postgres',  # Seu usuário PostgreSQL
+        'PASSWORD': 'hernanipostgreesql7',  # A senha do usuário PostgreSQL
+        'HOST': 'localhost',  # Host do banco de dados
+        'PORT': '5432',  # Porta padrão do PostgreSQL
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
+# Adicionar o site ID
+SITE_ID = 1
+
+#Crispy
+CRISPY_TEMPLATE_PACK = 'bootstrap4'  # ou 'bootstrap5'
+
+
+# Configurações de email e redirecionamento
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'your-email@gmail.com'  # Altere para seu email
+EMAIL_HOST_PASSWORD = 'your-email-password'  # Altere para sua senha
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_REQUIRED = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

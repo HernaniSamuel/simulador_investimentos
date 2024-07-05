@@ -1,0 +1,45 @@
+{% extends "account/base_entrance.html" %}
+{% load allauth i18n crispy_forms_tags %}
+{% block head_title %}
+    {% trans "Signup" %}
+{% endblock head_title %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center">{% trans "Sign Up" %}</h1>
+                    {% setvar link %}
+                        <a href="{{ login_url }}">
+                        {% endsetvar %}
+                        {% setvar end_link %}
+                        </a>
+                    {% endsetvar %}
+                    <p class="text-center">
+                        {% blocktranslate %}Already have an account? Then please {{ link }}sign in{{ end_link }}.{% endblocktranslate %}
+                    </p>
+                    {% if not SOCIALACCOUNT_ONLY %}
+                        {% url 'account_signup' as action_url %}
+                        <form method="post" action="{{ action_url }}" class="form">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ form|crispy }}
+                            </div>
+                            {{ redirect_field }}
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
+                            </div>
+                        </form>
+                    {% endif %}
+                    {% if SOCIALACCOUNT_ENABLED %}
+                        <div class="mt-3">
+                            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
