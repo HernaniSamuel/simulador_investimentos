@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e#snio-&8gc6mowm$ac8b+@nn%u*mxz!y1r1g&srr!zoe45@#1'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,11 +87,11 @@ WSGI_APPLICATION = 'simuladorinvestimentos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydatabase',  # O nome do banco de dados que você criou
-        'USER': 'postgres',  # Seu usuário PostgreSQL
-        'PASSWORD': 'hernanipostgreesql7',  # A senha do usuário PostgreSQL
-        'HOST': 'localhost',  # Host do banco de dados
-        'PORT': '5432',  # Porta padrão do PostgreSQL
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -103,7 +104,7 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 #Crispy
-CRISPY_TEMPLATE_PACK = 'bootstrap4'  # ou 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
 # Configurações de email e redirecionamento
@@ -111,14 +112,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'your-email@gmail.com'  # Altere para seu email
-EMAIL_HOST_PASSWORD = 'your-email-password'  # Altere para sua senha
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -138,6 +140,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+#Social account settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

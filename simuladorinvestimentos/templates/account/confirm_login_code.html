@@ -5,33 +5,32 @@
     {% translate "Sign In" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% translate "Enter Sign-In Code" %}
-    {% endelement %}
-    {% setvar email_link %}
-        <a href="mailto:{{ email }}">{{ email }}</a>
-    {% endsetvar %}
-    {% element p %}
-        {% blocktranslate %}We’ve sent a code to {{ email_link }}. The code expires shortly, so please enter it soon.{% endblocktranslate %}
-    {% endelement %}
+    <div class="text-center">
+        <h1 class="display-4">{% translate "Enter Sign-In Code" %}</h1>
+        <p class="lead">
+            {% blocktranslate %}We’ve sent a code to <a href="mailto:{{ email }}">{{ email }}</a>. The code expires shortly, so please enter it soon.{% endblocktranslate %}
+        </p>
+    </div>
     {% url 'account_confirm_login_code' as login_url %}
-    {% element form form=form method="post" action=login_url tags="entrance,login" %}
-        {% slot body %}
-            {% csrf_token %}
-            {% element fields form=form unlabeled=True %}
-            {% endelement %}
-            {{ redirect_field }}
-        {% endslot %}
-        {% slot actions %}
-            {% element button type="submit" tags="prominent,login" %}
-                {% translate "Sign In" %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
-    {% element h2 %}
+    <form method="post" action="{{ login_url }}" class="mt-4">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.non_field_errors }}
+            {{ form.email.errors }}
+            <label for="{{ form.email.id_for_label }}">{% translate "Email address" %}</label>
+            {{ form.email }}
+        </div>
+        <div class="form-group">
+            {{ form.code.errors }}
+            <label for="{{ form.code.id_for_label }}">{% translate "Code" %}</label>
+            {{ form.code }}
+        </div>
+        {{ redirect_field }}
+        <button type="submit" class="btn btn-primary btn-block">{% translate "Sign In" %}</button>
+    </form>
+    <div class="text-center mt-4">
+        <h2 class="h5">{% translate "Other sign-in options" %}</h2>
         {% url 'account_login' as login_url %}
-        {% element button href=login_url tags="link" %}
-            {% translate "Other sign-in options" %}
-        {% endelement %}
-    {% endelement %}
+        <a href="{{ login_url }}" class="btn btn-link">{% translate "Other sign-in options" %}</a>
+    </div>
 {% endblock content %}
