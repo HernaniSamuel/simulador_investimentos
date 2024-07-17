@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/templates/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/.env" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +22,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -37,21 +43,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Python.batata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.fodase.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.manage.executor&quot;: &quot;Run&quot;,
-    &quot;Python.vaitomarnocu.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/hdini/PycharmProjects/simulador_investimentos/templates&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Python.batata.executor": "Run",
+    "Python.fodase.executor": "Run",
+    "Python.main (1).executor": "Run",
+    "Python.manage.executor": "Run",
+    "Python.vaitomarnocu.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/hdini/PycharmProjects/simulador_investimentos/templates"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\hdini\PycharmProjects\simulador_investimentos\templates" />
