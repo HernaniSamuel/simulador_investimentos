@@ -5,34 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
-      <change afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/logo192.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/logo512.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/robots.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/App.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/App.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/logo.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/reportWebVitals.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/setupTests.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/App.css" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/asgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/asgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simuladorinvestimentos/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/wsgi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

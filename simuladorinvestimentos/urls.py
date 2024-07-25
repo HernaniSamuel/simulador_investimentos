@@ -16,16 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-import sys
-import os
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../..')
-
-from simulador import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('allauth.urls')),
     path('', include('simulador.urls')),
-    path('', views.index, name='index')
 ]

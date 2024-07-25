@@ -1,5 +1,7 @@
-import logo from './logo.svg';
-import './App.css';
+import { Link } from 'react-router-dom';
+import logo from '../logo.svg';
+import '../styles/App.css';
+
 
 function App() {
   return (
@@ -9,14 +11,13 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
+        <Link
           className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
+          to="/getdata"
           rel="noopener noreferrer"
         >
-          Learn React
-        </a>
+          Ver dados
+        </Link>
       </header>
     </div>
   );
