@@ -5,19 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/styles/App.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/PesquisarAtivo.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/SelecionarAtivosAutomatica.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/NovaSimulacaoAutomatica.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/PesquisarAtivo.css" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/migrations/0003_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

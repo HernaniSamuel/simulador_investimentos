@@ -1,0 +1,79 @@
+/* Estilização básica do contêiner do formulário */
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+  }
+  
+  /* Estilização do título do formulário */
+  .form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Estilização dos grupos de formulário */
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  /* Estilização dos rótulos */
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  /* Estilização dos campos de entrada */
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  /* Estilização do botão de envio */
+  .submit-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* Estilização do botão de envio ao passar o mouse */
+  .submit-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Estilização das mensagens de sucesso e erro */
+  .success-message {
+    color: #28a745;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 20px;
+  }

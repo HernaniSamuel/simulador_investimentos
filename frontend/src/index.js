@@ -8,17 +8,27 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 //Importar componentes
 import GetData from './components/DataComponent';
+import NovaSimulacaoAutomatica from './components/NovaSimulacaoAutomatica';
+import SelecionarAtivosAutomatica from './components/SelecionarAtivosAutomatica';
 
 //Estruturar rotas
 const router = createBrowserRouter([
   {
     path:"/",
     element: <App/>
-},
+  },
   {
-    path:"/getdata",
-    element: <GetData/>
-}
+      path:"/getdata",
+      element: <GetData/>
+  },
+  {
+    path:"/novasimulacaoautomatica",
+    element: <NovaSimulacaoAutomatica/>
+  },
+  {
+    path:"/selecionarativosautomatica",
+    element: <SelecionarAtivosAutomatica/>
+  }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

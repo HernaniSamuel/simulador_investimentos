@@ -18,6 +18,13 @@ function App() {
         >
           Ver dados
         </Link>
+        <Link
+          className="App-link"
+          to="/novasimulacaoautomatica"
+          rel="noopener noreferrer"
+        >
+          Nova Simulação Automática
+        </Link>
       </header>
     </div>
   );
