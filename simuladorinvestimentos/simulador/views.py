@@ -87,21 +87,30 @@ def pesquisar_ativos(request):
             if not ticker:
                 return JsonResponse({'error': 'Ticker is required'}, status=400)
 
-            def ticker_exists(ticker):
-                try:
-                    stock = yf.Ticker(ticker)
-                    info = stock.info
-                    if 'regularMarketPrice' in info:
-                        return True
-                    else:
-                        return False
-                except Exception as e:
-                    print(f"Error checking ticker: {e}")
-                    return False
+            try:
+                stock = yf.Ticker(ticker)
+                stock_info = stock.info
 
-            if ticker_exists(ticker):
-                return JsonResponse({'exists': True, 'ticker': ticker}, status=200)
-            else:
+                # Verificando se o ticker é válido
+                if 'longName' in stock_info:
+                    stock_name = stock_info['longName']
+                else:
+                    stock_name = 'Unknown'
+
+                # Baixando os dados históricos do ticker
+                stock_data = yf.download(ticker, start='2024-07-01', end='2024-08-01', interval='1mo')
+
+                # Verificando se há dados retornados
+                if not stock_data.empty:
+                    adj_close = stock_data['Adj Close'].iloc[0]  # Obtendo o primeiro valor de 'Adj Close'
+                    if adj_close > 0:
+                        return JsonResponse({'exists': True, 'ticker': ticker, 'name': stock_name}, status=200)
+                    else:
+                        return JsonResponse({'exists': False, 'ticker': ticker, 'name': stock_name}, status=404)
+                else:
+                    return JsonResponse({'exists': False, 'ticker': ticker, 'name': stock_name}, status=404)
+            except Exception as e:
+                print(f"Error checking ticker: {e}")
                 return JsonResponse({'exists': False, 'ticker': ticker}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)

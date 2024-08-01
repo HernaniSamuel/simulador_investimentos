@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from simulador import views as simulador_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('allauth.urls')),
-    path('', include('simulador.urls')),
+    path('', simulador_views.index, name='index'),
+    path('api/', include('simulador.urls')),
 ]
