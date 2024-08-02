@@ -1,6 +1,5 @@
 from django.db import models
 
-from .utils import pesquisar_precos
 
 class Ativo(models.Model):
     ticker = models.CharField(max_length=10)
@@ -24,11 +23,10 @@ class CarteiraAutomatica(models.Model):
     moeda_base = models.CharField(max_length=10)
 
     def comprar_ativos(self):
-        pass
+            pass
 
     def calcular_valor_ativos(self):
         pass
-
 
 
 class SimulacaoAutomatica(models.Model):
@@ -38,7 +36,6 @@ class SimulacaoAutomatica(models.Model):
     aplicacao_inicial = models.FloatField()
     aplicacao_mensal = models.FloatField()
     carteira_automatica = models.OneToOneField(CarteiraAutomatica, on_delete=models.CASCADE)
-
-    def iterar_tempo(self):
-        pass
-
+    tipo = models.CharField(max_length=10)
+    inflacao_total = models.JSONField(default=dict)
+    resultados = models.JSONField(default=dict)

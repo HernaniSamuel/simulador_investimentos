@@ -41,17 +41,18 @@ const NovaSimulacaoAutomatica = () => {
       })
     });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (response.ok) {
-    setMessage(data.message);
-    setError('');
-    navigate('/selecionarativosautomatica');
-  } else {
-    setMessage('');
-    setError(data.error);
-  }
-};
+    if (response.ok) {
+      setMessage(data.message);
+      setError('');
+      // Passar os IDs da simulação e carteira como parte do estado de navegação
+      navigate('/selecionarativosautomatica', { state: { simulacaoId: data.simulacao_id, carteiraId: data.carteira_id } });
+    } else {
+      setMessage('');
+      setError(data.error);
+    }
+  };
 
   const getCookie = (name) => {
     let cookieValue = null;

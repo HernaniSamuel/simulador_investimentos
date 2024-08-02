@@ -6,6 +6,8 @@ import yfinance as yf
 import logging
 import json
 from .models import Ativo, CarteiraAutomatica, SimulacaoAutomatica
+from datetime import datetime, timedelta
+from .utils import pegar_inflacao, ajustar_inflacao
 
 
 logger = logging.getLogger(__name__)
@@ -44,18 +46,19 @@ def nova_simulacao_automatica(request):
     if request.method == 'POST':
         body = json.loads(request.body)
         nome = body.get('nome')
-        data_inicial = body.get('data_inicial')
-        data_final = body.get('data_final')
+        data_inicial = body.get('data_inicial') # a data inicial deverá ser corrigida para YYYY-MM-DD
+        data_final = body.get('data_final') # a data final deverá ser corrigida para YYYY-MM-DD
         aplicacao_inicial = body.get('aplicacao_inicial')
         aplicacao_mensal = body.get('aplicacao_mensal')
         moeda_base = body.get('moeda_base')
 
+        inflacao_total = pegar_inflacao(start_date=data_inicial, end_date=data_final)
+
         if not nome or not data_inicial or not data_final or not aplicacao_inicial or not aplicacao_mensal or not moeda_base:
             return JsonResponse({'error': 'Missing parameters'}, status=400)
 
-
         carteira_automatica = CarteiraAutomatica.objects.create(
-            valor_em_dinheiro = aplicacao_inicial,
+            valor_em_dinheiro=aplicacao_inicial,
             moeda_base=moeda_base
         )
 
@@ -65,7 +68,9 @@ def nova_simulacao_automatica(request):
             data_final=data_final,
             aplicacao_inicial=aplicacao_inicial,
             aplicacao_mensal=aplicacao_mensal,
-            carteira_automatica=carteira_automatica
+            carteira_automatica=carteira_automatica,
+            tipo='automatica',
+            inflacao_total=inflacao_total
         )
         return JsonResponse({
             'message': 'Simulação automática criada com sucesso',
@@ -98,7 +103,11 @@ def pesquisar_ativos(request):
                     stock_name = 'Unknown'
 
                 # Baixando os dados históricos do ticker
-                stock_data = yf.download(ticker, start='2024-07-01', end='2024-08-01', interval='1mo')
+                end_date = datetime.now().strftime('%Y-%m-%d')
+                start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+
+                # Baixa os dados do ativo
+                stock_data = yf.download(ticker, start=start_date, end=end_date, interval='1mo')
 
                 # Verificando se há dados retornados
                 if not stock_data.empty:
@@ -115,3 +124,49 @@ def pesquisar_ativos(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt
+def enviar_ativos(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            carteira_id = data.get('carteira_id')
+            simulacao_id = data.get('simulacao_id')
+
+            if not carteira_id or not simulacao_id:
+                return JsonResponse({'error': 'Missing carteira_id or simulacao_id'}, status=400)
+
+            carteira_automatica = CarteiraAutomatica.objects.get(id=carteira_id)
+            simulacao_automatica = SimulacaoAutomatica.objects.get(id=simulacao_id)
+
+            # Processar os dados recebidos
+            for item in data['ativos']:
+                ticker = item['ticker']
+                peso = item['peso']
+                nome = yf.Ticker(ticker).info['longName']
+                precos = yf.download(ticker, start=simulacao_automatica.data_inicial, end=simulacao_automatica.data_final, interval='1mo')
+
+                ativo = Ativo.objects.create(
+                    ticker=ticker,
+                    peso=peso,
+                    posse=0,
+                    nome=nome,
+                    precos=precos,
+                    carteira_automatica=carteira_automatica  # Associar o ativo à carteira
+                )
+
+            return JsonResponse({'status': 'success'}, status=200)
+        except CarteiraAutomatica.DoesNotExist:
+            return JsonResponse({'error': 'CarteiraAutomatica not found'}, status=404)
+        except SimulacaoAutomatica.DoesNotExist:
+            return JsonResponse({'error': 'SimulacaoAutomatica not found'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt
+def resultado_simulacao_automatica(request):
+    pass

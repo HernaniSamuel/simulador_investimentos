@@ -1,61 +1,47 @@
 import React, { useState } from 'react';
 import '../styles/PesquisarAtivo.css'; // Importando o CSS
 
-const PesquisarAtivo = () => {
+const PesquisarAtivo = ({ adicionarAtivo }) => {
   const [ticker, setTicker] = useState('');
   const [resultado, setResultado] = useState(null);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const csrfToken = getCookie('csrftoken'); // Função para obter o CSRF token
-
+  
     try {
       const response = await fetch('http://127.0.0.1:8000/api/pesquisar_ativos/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({ ticker })
       });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
 
       const data = await response.json();
 
       if (response.ok) {
         setResultado(data);
         setError('');
+      } else if (response.status === 404) {
+        // Ativo não encontrado
+        setResultado(data);
+        setError('');
       } else {
+        // Outro tipo de erro
         setResultado(null);
-        setError(data.error);
+        setError(data.error || 'Unknown error');
       }
     } catch (error) {
+      // Erro de rede ou outra exceção
       console.error('Failed to fetch:', error);
       setError('Failed to fetch');
     }
   };
 
-  const getCookie = (name) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  };
-
   return (
     <div className="pesquisar-ativo-container">
+      <h2>Pesquisar Ativos</h2>
       <form onSubmit={handleSubmit} className="pesquisar-ativo-form">
         <div className="pesquisar-ativo-input-container">
           <input
@@ -74,9 +60,12 @@ const PesquisarAtivo = () => {
       <div className="pesquisar-ativo-result">
         {resultado && (
           resultado.exists ? (
-            <p>Ativo encontrado: {resultado.ticker}</p>
+            <div>
+              <p>Ativo encontrado: {resultado.ticker} - {resultado.name}</p>
+              <button onClick={() => adicionarAtivo(resultado.ticker)}>Adicionar</button>
+            </div>
           ) : (
-            <p>Ativo não encontrado: {resultado.ticker}</p>
+            <p>Ativo não encontrado: {resultado.ticker} - {resultado.name}</p>
           )
         )}
         {error && <p style={{ color: 'red' }}>{error}</p>}
