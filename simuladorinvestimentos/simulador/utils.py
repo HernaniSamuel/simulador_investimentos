@@ -1,21 +1,49 @@
 from bcb import sgs
+import pandas as pd
+from datetime import datetime
+import json
 
 
-def pegar_inflacao(start_date, end_date):
-    """
-    Obter dados de inflação (IPCA) do Banco Central do Brasil.
+def pegar_inflacao(start_date):
+    codigo_ipca = 433  # Código do IPCA no SGS
+    try:
+        end_date = datetime.today().strftime('%Y-%m-%d')
 
-    :param start_date: Data inicial no formato 'YYYY-MM-DD'
-    :param end_date: Data final no formato 'YYYY-MM-DD'
-    :return: DataFrame com dados de inflação
-    """
-    # Código da série temporal do IPCA no BCB
-    codigo_ipca = 433
+        # Adicionando log para verificar as datas
+        print(f"Tentando obter dados de {start_date} até {end_date}")
 
-    # Obter os dados da série temporal
-    ipca_data = sgs.get(codigo_ipca, start=start_date, end=end_date)
+        # Pegando os dados
+        df = sgs.get(codigo_ipca, start=start_date, end=end_date)
 
-    return ipca_data, '433'  # Retorna o DataFrame e o nome da coluna como string
+        # Verificando se o df é realmente um DataFrame
+        if not isinstance(df, pd.DataFrame):
+            print(f"Erro: Resposta não é um DataFrame. Tipo recebido: {type(df)}")
+            print(f"Conteúdo da resposta: {df}")
+            return None
+
+        print(f"Resposta da API: {df}")
+
+        if df.empty:
+            print("Erro: DataFrame está vazio")
+            return None
+
+        # Verificando as colunas do DataFrame
+        print(f"Colunas do DataFrame: {df.columns}")
+
+        # Tentando somar os valores da primeira coluna
+        try:
+            inflacao_total = df.iloc[:, 0].sum()
+            return inflacao_total
+        except Exception as e:
+            print(f"Erro ao somar valores: {e}")
+            return None
+
+    except json.JSONDecodeError as je:
+        print(f"Erro ao decodificar JSON: {je}")
+        return None
+    except Exception as e:
+        print(f"Erro ao pegar inflação: {e}")
+        return None
 
 
 def ajustar_inflacao(ipca_data, coluna_ipca, periodo_inicial, valor, data_final):

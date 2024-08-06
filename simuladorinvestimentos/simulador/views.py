@@ -1,11 +1,11 @@
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 import yfinance as yf
 import logging
 import json
-from .models import Ativo, CarteiraAutomatica, SimulacaoAutomatica
+from .models import Ativo, CarteiraAutomatica, SimulacaoAutomatica, Historico
 from datetime import datetime, timedelta
 from .utils import pegar_inflacao, ajustar_inflacao
 
@@ -40,48 +40,75 @@ def get_data(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-#@login_required()
+@login_required()
 @csrf_exempt
 def nova_simulacao_automatica(request):
     if request.method == 'POST':
         body = json.loads(request.body)
         nome = body.get('nome')
-        data_inicial = body.get('data_inicial') # a data inicial deverá ser corrigida para YYYY-MM-DD
-        data_final = body.get('data_final') # a data final deverá ser corrigida para YYYY-MM-DD
+        data_inicial = body.get('data_inicial')
+        data_final = body.get('data_final')
         aplicacao_inicial = body.get('aplicacao_inicial')
         aplicacao_mensal = body.get('aplicacao_mensal')
         moeda_base = body.get('moeda_base')
 
-        inflacao_total = pegar_inflacao(start_date=data_inicial, end_date=data_final)
-
         if not nome or not data_inicial or not data_final or not aplicacao_inicial or not aplicacao_mensal or not moeda_base:
             return JsonResponse({'error': 'Missing parameters'}, status=400)
 
-        carteira_automatica = CarteiraAutomatica.objects.create(
-            valor_em_dinheiro=aplicacao_inicial,
-            moeda_base=moeda_base
-        )
+        try:
+            inflacao_total = pegar_inflacao(start_date=data_inicial)
+            if inflacao_total is None:
+                return JsonResponse({'error': 'Failed to fetch inflation data'}, status=500)
 
-        simulacao_automatica = SimulacaoAutomatica.objects.create(
-            nome=nome,
-            data_inicial=data_inicial,
-            data_final=data_final,
-            aplicacao_inicial=aplicacao_inicial,
-            aplicacao_mensal=aplicacao_mensal,
-            carteira_automatica=carteira_automatica,
-            tipo='automatica',
-            inflacao_total=inflacao_total
-        )
-        return JsonResponse({
-            'message': 'Simulação automática criada com sucesso',
-            'simulacao_id': simulacao_automatica.id,
-            'carteira_id': carteira_automatica.id
-        }, status=200)
+            print('Dados de inflação pegos')
+
+            carteira_automatica = CarteiraAutomatica.objects.create(
+                valor_em_dinheiro=aplicacao_inicial,
+                moeda_base=moeda_base,
+                valor_ativos=0
+            )
+            print('Carteira automática criada')
+
+            simulacao_automatica = SimulacaoAutomatica.objects.create(
+                nome=nome,
+                data_inicial=data_inicial,
+                data_final=data_final,
+                aplicacao_inicial=aplicacao_inicial,
+                aplicacao_mensal=aplicacao_mensal,
+                carteira_automatica=carteira_automatica,
+                usuario=request.user,  # Adicionando o usuário à simulação
+                inflacao_total=inflacao_total  # Certificando-se de que inflacao_total é passado
+            )
+            print('Simulação automática criada')
+
+            # Verificar se já existe um histórico para o usuário
+            historico, created = Historico.objects.get_or_create(
+                usuario=request.user,
+                defaults={'data_criacao': datetime.now()}
+            )
+            print('Histórico criado')
+
+
+            # Adicionar simulação ao histórico do usuário
+            historico.simulacoes.add(simulacao_automatica)
+            historico.save()
+            print('Simulação adicionada ao histórico')
+
+
+            return JsonResponse({
+                'message': 'Simulação automática criada com sucesso',
+                'simulacao_id': simulacao_automatica.id,
+                'carteira_id': carteira_automatica.id,
+                'inflacao_total': inflacao_total
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-#@login_required
+@login_required
 @csrf_exempt
 def pesquisar_ativos(request):
     if request.method == 'POST':
@@ -126,6 +153,7 @@ def pesquisar_ativos(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
+@login_required()
 @csrf_exempt
 def enviar_ativos(request):
     if request.method == 'POST':
@@ -134,39 +162,87 @@ def enviar_ativos(request):
             carteira_id = data.get('carteira_id')
             simulacao_id = data.get('simulacao_id')
 
+            print(f"Recebido carteira_id: {carteira_id}, simulacao_id: {simulacao_id}")
+
             if not carteira_id or not simulacao_id:
                 return JsonResponse({'error': 'Missing carteira_id or simulacao_id'}, status=400)
 
             carteira_automatica = CarteiraAutomatica.objects.get(id=carteira_id)
             simulacao_automatica = SimulacaoAutomatica.objects.get(id=simulacao_id)
 
-            # Processar os dados recebidos
+            print(f"Carteira e Simulação encontradas. Processando ativos...")
+
             for item in data['ativos']:
                 ticker = item['ticker']
                 peso = item['peso']
-                nome = yf.Ticker(ticker).info['longName']
-                precos = yf.download(ticker, start=simulacao_automatica.data_inicial, end=simulacao_automatica.data_final, interval='1mo')
+                print(f"Processando ativo: {ticker} com peso {peso}")
 
+                nome = yf.Ticker(ticker).info['longName']
+                precos_df = yf.download(ticker, start=simulacao_automatica.data_inicial,
+                                        end=simulacao_automatica.data_final, interval='1mo')
+
+                # Converter DataFrame para lista de dicionários com datas como strings
+                precos = precos_df.reset_index().to_dict(orient='records')
+                for preco in precos:
+                    preco['Date'] = preco['Date'].isoformat()  # Converter Timestamp para string ISO 8601
+
+                print(f"Criando objeto Ativo para {ticker}")
                 ativo = Ativo.objects.create(
                     ticker=ticker,
                     peso=peso,
                     posse=0,
                     nome=nome,
-                    precos=precos,
-                    carteira_automatica=carteira_automatica  # Associar o ativo à carteira
+                    precos=json.dumps(precos),  # Serializar para JSON
                 )
 
+                print(f"Adicionando {ticker} à carteira")
+                carteira_automatica.ativos.add(ativo)
+
+            print("Todos os ativos processados com sucesso")
             return JsonResponse({'status': 'success'}, status=200)
-        except CarteiraAutomatica.DoesNotExist:
-            return JsonResponse({'error': 'CarteiraAutomatica not found'}, status=404)
-        except SimulacaoAutomatica.DoesNotExist:
-            return JsonResponse({'error': 'SimulacaoAutomatica not found'}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            print(f"Erro inesperado: {str(e)}")
+            return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
+@login_required()
 @csrf_exempt
 def resultado_simulacao_automatica(request):
     pass
+
+
+@login_required()
+@csrf_exempt
+def listar_historico(request):
+    if request.method == 'GET':
+        historico = Historico.objects.filter(usuario=request.user)
+        historico_list = [
+            {
+                'id': item.id,
+                'simulacoes': [
+                    {
+                        'simulacao_id': simulacao.id,
+                        'nome': simulacao.nome,
+                        'data_criacao': item.data_criacao,
+                        'data_inicial': simulacao.data_inicial,
+                        'data_final': simulacao.data_final,
+                        'aplicacao_inicial': simulacao.aplicacao_inicial,
+                        'aplicacao_mensal': simulacao.aplicacao_mensal,
+                    }
+                    for simulacao in item.simulacoes.all()
+                ]
+            }
+            for item in historico
+        ]
+        return JsonResponse(historico_list, safe=False)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required()
+@csrf_exempt
+def excluir_simulacao(request, simulacao_id):
+    simulacao = get_object_or_404(SimulacaoAutomatica, id=simulacao_id, usuario=request.user)
+    simulacao.delete()
+    return JsonResponse({'message': 'Simulação excluída com sucesso'})

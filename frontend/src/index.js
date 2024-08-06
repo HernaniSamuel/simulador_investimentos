@@ -10,6 +10,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import GetData from './components/DataComponent';
 import NovaSimulacaoAutomatica from './components/NovaSimulacaoAutomatica';
 import SelecionarAtivosAutomatica from './components/SelecionarAtivosAutomatica';
+import Historico from './components/Historico';
 
 //Estruturar rotas
 const router = createBrowserRouter([
@@ -28,7 +29,11 @@ const router = createBrowserRouter([
   {
     path:"/selecionarativosautomatica",
     element: <SelecionarAtivosAutomatica/>
-  }
+  },
+  {
+    path:"/historico",
+    element: <Historico/>
+  },
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

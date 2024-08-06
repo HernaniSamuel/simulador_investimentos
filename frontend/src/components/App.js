@@ -25,6 +25,13 @@ function App() {
         >
           Nova Simulação Automática
         </Link>
+        <Link
+          className="App-link"
+          to="/historico"
+          rel="noopener noreferrer"
+        >
+          Histórico de Simulações
+        </Link>
       </header>
     </div>
   );

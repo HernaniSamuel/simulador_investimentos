@@ -25,7 +25,7 @@ const NovaSimulacaoAutomatica = () => {
 
     const csrfToken = getCookie('csrftoken');
 
-    const response = await fetch('http://127.0.0.1:8000/api/novasimulacaoautomatica', {
+    const response = await fetch('http://127.0.0.1:8000/api/nova_simulacao_automatica/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
