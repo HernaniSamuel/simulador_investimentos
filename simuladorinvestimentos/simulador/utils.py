@@ -1,46 +1,30 @@
 from bcb import sgs
-import pandas as pd
 from datetime import datetime
-import json
+import pandas as pd
 
 
-def pegar_inflacao(start_date):
+def pegar_inflacao(start_date, end_date):
     codigo_ipca = 433  # Código do IPCA no SGS
     try:
-        end_date = datetime.today().strftime('%Y-%m-%d')
-
-        # Adicionando log para verificar as datas
-        print(f"Tentando obter dados de {start_date} até {end_date}")
-
-        # Pegando os dados
+        # Pegando os dados diretamente como DataFrame
         df = sgs.get(codigo_ipca, start=start_date, end=end_date)
+        print(f"Resposta da API (bruto): {df}")  # Log da resposta
 
-        # Verificando se o df é realmente um DataFrame
-        if not isinstance(df, pd.DataFrame):
-            print(f"Erro: Resposta não é um DataFrame. Tipo recebido: {type(df)}")
-            print(f"Conteúdo da resposta: {df}")
-            return None
-
-        print(f"Resposta da API: {df}")
-
+        # Verificar se a resposta está no formato esperado
         if df.empty:
             print("Erro: DataFrame está vazio")
             return None
 
-        # Verificando as colunas do DataFrame
-        print(f"Colunas do DataFrame: {df.columns}")
-
-        # Tentando somar os valores da primeira coluna
-        try:
-            inflacao_total = df.iloc[:, 0].sum()
-            return inflacao_total
-        except Exception as e:
-            print(f"Erro ao somar valores: {e}")
+        # Ajustando para acessar a coluna correta
+        coluna_ipca = str(codigo_ipca)  # Nome da coluna é o código do IPCA
+        if coluna_ipca not in df.columns:
+            print(f"Erro: Coluna '{coluna_ipca}' não encontrada no DataFrame")
             return None
 
-    except json.JSONDecodeError as je:
-        print(f"Erro ao decodificar JSON: {je}")
-        return None
+        # Somando os valores de inflação
+        inflacao_total = df[coluna_ipca].sum()  # Usando a coluna correta para somar os valores
+        print(f"Inflação total calculada: {inflacao_total}")
+        return inflacao_total
     except Exception as e:
         print(f"Erro ao pegar inflação: {e}")
         return None
@@ -57,15 +41,28 @@ def ajustar_inflacao(ipca_data, coluna_ipca, periodo_inicial, valor, data_final)
     :param data_final: Data final no formato 'YYYY-MM-DD'
     :return: Valor ajustado pela inflação
     """
-    # Filtrar os dados para o período relevante
-    df_ipca = ipca_data.loc[periodo_inicial:data_final].copy()
+    try:
+        # Converter período_inicial e data_final para objetos datetime se forem strings
+        if isinstance(periodo_inicial, str):
+            periodo_inicial = datetime.strptime(periodo_inicial, '%Y-%m-%d').date()
+        if isinstance(data_final, str):
+            data_final = datetime.strptime(data_final, '%Y-%m-%d').date()
 
-    # Calcular o fator de correção acumulado
-    df_ipca['IPCA'] = df_ipca[coluna_ipca] / 100  # Converter porcentagem para fator decimal
-    df_ipca['Fator de Correcao'] = (1 + df_ipca['IPCA']).cumprod()
+        # Garantir que o índice do DataFrame seja do tipo datetime
+        ipca_data.index = pd.to_datetime(ipca_data.index)
 
-    # Calcular o valor equivalente
-    fator_correcao_final = df_ipca['Fator de Correcao'].iloc[-1]
-    valor_equivalente = valor / fator_correcao_final
+        # Filtrar os dados para o período relevante
+        df_ipca = ipca_data.loc[periodo_inicial:data_final].copy()
 
-    return valor_equivalente
+        # Calcular o fator de correção acumulado
+        df_ipca['IPCA'] = df_ipca[coluna_ipca] / 100  # Converter porcentagem para fator decimal
+        df_ipca['Fator de Correcao'] = (1 + df_ipca['IPCA']).cumprod()
+
+        # Calcular o valor equivalente
+        fator_correcao_final = df_ipca['Fator de Correcao'].iloc[-1]
+        valor_equivalente = valor / fator_correcao_final
+
+        return valor_equivalente
+    except Exception as e:
+        print(f"Erro ao ajustar inflação: {e}")
+        return None

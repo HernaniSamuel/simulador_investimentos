@@ -5,9 +5,12 @@ from django.views.decorators.csrf import csrf_exempt
 import yfinance as yf
 import logging
 import json
+import pandas as pd
+from dateutil.relativedelta import relativedelta
 from .models import Ativo, CarteiraAutomatica, SimulacaoAutomatica, Historico
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from .utils import pegar_inflacao, ajustar_inflacao
+from calendar import monthrange
 
 
 logger = logging.getLogger(__name__)
@@ -56,9 +59,13 @@ def nova_simulacao_automatica(request):
             return JsonResponse({'error': 'Missing parameters'}, status=400)
 
         try:
-            inflacao_total = pegar_inflacao(start_date=data_inicial)
+            inflacao_total = pegar_inflacao(start_date=data_inicial, end_date=datetime.today().strftime('%Y-%m-%d'))
             if inflacao_total is None:
                 return JsonResponse({'error': 'Failed to fetch inflation data'}, status=500)
+
+            # Converter para DataFrame e então para dicionário antes de salvar
+            inflacao_df = pd.DataFrame({'433': [inflacao_total]})
+            inflacao_dict = inflacao_df.to_dict()
 
             print('Dados de inflação pegos')
 
@@ -77,7 +84,7 @@ def nova_simulacao_automatica(request):
                 aplicacao_mensal=aplicacao_mensal,
                 carteira_automatica=carteira_automatica,
                 usuario=request.user,  # Adicionando o usuário à simulação
-                inflacao_total=inflacao_total  # Certificando-se de que inflacao_total é passado
+                inflacao_total=inflacao_dict
             )
             print('Simulação automática criada')
 
@@ -162,24 +169,49 @@ def enviar_ativos(request):
             carteira_id = data.get('carteira_id')
             simulacao_id = data.get('simulacao_id')
 
-            print(f"Recebido carteira_id: {carteira_id}, simulacao_id: {simulacao_id}")
-
             if not carteira_id or not simulacao_id:
                 return JsonResponse({'error': 'Missing carteira_id or simulacao_id'}, status=400)
 
             carteira_automatica = CarteiraAutomatica.objects.get(id=carteira_id)
             simulacao_automatica = SimulacaoAutomatica.objects.get(id=simulacao_id)
 
-            print(f"Carteira e Simulação encontradas. Processando ativos...")
+            moeda_carteira = carteira_automatica.moeda_base
+
+            # Dicionário para armazenar as taxas de câmbio baixadas
+            cambio_cache = {}
 
             for item in data['ativos']:
                 ticker = item['ticker']
                 peso = item['peso']
                 print(f"Processando ativo: {ticker} com peso {peso}")
 
-                nome = yf.Ticker(ticker).info['longName']
+                # Obtendo informações do ativo
+                ativo_info = yf.Ticker(ticker).info
+                nome = ativo_info['longName']
+                moeda_ativo = ativo_info['currency']
+
+                # Pegar preços dos ativos
                 precos_df = yf.download(ticker, start=simulacao_automatica.data_inicial,
                                         end=simulacao_automatica.data_final, interval='1mo')
+
+                # Se a moeda do ativo for diferente da moeda da carteira, faça a conversão
+                if moeda_ativo != moeda_carteira:
+                    print(f"Convertendo preços de {moeda_ativo} para {moeda_carteira}")
+
+                    # Verificar se o câmbio já está no cache
+                    if moeda_ativo in cambio_cache:
+                        cambio_df = cambio_cache[moeda_ativo]
+                    else:
+                        cambio_ticker = f"{moeda_ativo}{moeda_carteira}=X"
+                        cambio_df = yf.download(cambio_ticker, start=simulacao_automatica.data_inicial,
+                                                end=simulacao_automatica.data_final, interval='1mo')
+                        cambio_cache[moeda_ativo] = cambio_df  # Armazenar no cache
+
+                    # Garantindo que a data do câmbio corresponde à data dos preços do ativo
+                    cambio_df = cambio_df.reindex(precos_df.index, method='ffill')
+
+                    # Convertendo preços para a moeda da carteira
+                    precos_df['Adj Close'] = precos_df['Adj Close'] * cambio_df['Adj Close']
 
                 # Converter DataFrame para lista de dicionários com datas como strings
                 precos = precos_df.reset_index().to_dict(orient='records')
@@ -195,14 +227,15 @@ def enviar_ativos(request):
                     precos=json.dumps(precos),  # Serializar para JSON
                 )
 
-                print(f"Adicionando {ticker} à carteira")
                 carteira_automatica.ativos.add(ativo)
 
-            print("Todos os ativos processados com sucesso")
             return JsonResponse({'status': 'success'}, status=200)
-        except Exception as e:
-            print(f"Erro inesperado: {str(e)}")
-            return JsonResponse({'error': str(e)}, status=500)
+        except CarteiraAutomatica.DoesNotExist:
+            return JsonResponse({'error': 'CarteiraAutomatica not found'}, status=404)
+        except SimulacaoAutomatica.DoesNotExist:
+            return JsonResponse({'error': 'SimulacaoAutomatica not found'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -210,7 +243,87 @@ def enviar_ativos(request):
 @login_required()
 @csrf_exempt
 def resultado_simulacao_automatica(request):
-    pass
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            simulacao_id = data.get('simulacao_id')
+
+            if not simulacao_id:
+                return JsonResponse({'error': 'Missing simulacao_id'}, status=400)
+
+            simulacao = SimulacaoAutomatica.objects.get(id=simulacao_id)
+            ipca_data = pd.DataFrame(simulacao.inflacao_total)
+            data_final = datetime.today().date()
+
+            if isinstance(simulacao.data_inicial, date):
+                data_inicial = simulacao.data_inicial
+            else:
+                data_inicial = safe_strptime(simulacao.data_inicial)
+
+            if data_inicial is None or data_final is None:
+                return JsonResponse({'error': 'Invalid date format'}, status=400)
+
+            aplicacao_inicial_ajustada = ajustar_inflacao(
+                periodo_inicial=data_inicial,
+                ipca_data=ipca_data,
+                coluna_ipca='433',
+                valor=simulacao.aplicacao_inicial,
+                data_final=data_final
+            ) or 0
+
+            aplicacoes_mensais_ajustadas = []
+            data_corrente = data_inicial
+
+            while data_corrente <= simulacao.data_final:
+                aplicacao_mensal_ajustada = ajustar_inflacao(
+                    periodo_inicial=data_corrente,
+                    ipca_data=ipca_data,
+                    coluna_ipca='433',
+                    valor=simulacao.aplicacao_mensal,
+                    data_final=data_final
+                ) or 0
+                aplicacoes_mensais_ajustadas.append(aplicacao_mensal_ajustada)
+                data_corrente += relativedelta(months=1)
+                # Ajusta o dia se estiver fora do intervalo para o novo mês
+                ultimo_dia_do_mes = monthrange(data_corrente.year, data_corrente.month)[1]
+                if data_corrente.day > ultimo_dia_do_mes:
+                    data_corrente = data_corrente.replace(day=ultimo_dia_do_mes)
+
+            adjclose_carteira = []
+            valor_total_carteira = aplicacao_inicial_ajustada
+
+            for mes_index, aplicacao_mensal in enumerate(aplicacoes_mensais_ajustadas):
+                valor_total_carteira += aplicacao_mensal
+                for ativo in simulacao.carteira_automatica.ativos.all():
+                    preco_ativo = ativo.precos[mes_index]['Adj Close']
+                    valor_investido = aplicacao_mensal * ativo.peso
+                    quantidade_comprada = valor_investido / preco_ativo
+                    ativo.posse += quantidade_comprada
+                    valor_total_carteira -= valor_investido
+
+                valor_total_carteira_mes = sum(
+                    ativo.posse * ativo.precos[mes_index]['Adj Close']
+                    for ativo in simulacao.carteira_automatica.ativos.all()
+                )
+                adjclose_carteira.append(valor_total_carteira_mes)
+
+            return JsonResponse({'adjclose_carteira': adjclose_carteira}, status=200)
+
+        except SimulacaoAutomatica.DoesNotExist:
+            return JsonResponse({'error': 'SimulacaoAutomatica not found'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            print(f'Erro durante a simulação: {str(e)}')
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def safe_strptime(date_str, format='%Y-%m-%d'):
+    try:
+        return datetime.strptime(date_str, format).date()
+    except ValueError:
+        return None
 
 
 @login_required()

@@ -7,5 +7,6 @@ urlpatterns = [
     path('pesquisar_ativos/', views.pesquisar_ativos, name='pesquisar_ativos'),
     path('enviar_ativos/', views.enviar_ativos, name='enviar_ativos'),
     path('historico/', views.listar_historico, name='listar_historico'),
-    path('excluir_simulacao/<int:simulacao_id>/', views.excluir_simulacao, name='excluir_simulacao')
+    path('excluir_simulacao/<int:simulacao_id>/', views.excluir_simulacao, name='excluir_simulacao'),
+    path('resultado_simulacao_automatica/', views.resultado_simulacao_automatica, name='resultado_simulacao_automatica'),
 ]

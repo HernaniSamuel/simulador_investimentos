@@ -110,7 +110,7 @@ function SelecionarAtivosAutomatica() {
       });
 
       if (response.ok) {
-        navigate('/sucesso', { state: { simulacaoId } });
+        navigate('/resultadosimulacaoautomatica', { state: { simulacaoId } });
       } else {
         // Handle error response
         alert('Erro ao enviar os dados');

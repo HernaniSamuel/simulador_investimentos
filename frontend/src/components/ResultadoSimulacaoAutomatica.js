@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 
 function ResultadoSimulacaoAutomatica() {
   const location = useLocation();
@@ -37,6 +39,32 @@ function ResultadoSimulacaoAutomatica() {
     fetchData();
   }, [simulacaoId]);
 
+  // Configuração do gráfico
+  const chartOptions = resultado
+    ? {
+        title: {
+          text: 'Resultado da Simulação Automática'
+        },
+        xAxis: {
+          categories: resultado.dates, // Supondo que você tenha uma lista de datas no resultado
+          title: {
+            text: 'Meses'
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Valor da Carteira (BRL)'
+          }
+        },
+        series: [
+          {
+            name: 'Valor da Carteira',
+            data: resultado.adjclose_carteira // Supondo que os valores ajustados da carteira estejam aqui
+          }
+        ]
+      }
+    : null;
+
   return (
     <div>
       {loading && <p>A simulação está sendo executada, por favor aguarde...</p>}
@@ -44,7 +72,7 @@ function ResultadoSimulacaoAutomatica() {
       {!loading && resultado && (
         <div>
           <h1>Resultado da Simulação</h1>
-          <p>{JSON.stringify(resultado)}</p>
+          <HighchartsReact highcharts={Highcharts} options={chartOptions} />
         </div>
       )}
     </div>

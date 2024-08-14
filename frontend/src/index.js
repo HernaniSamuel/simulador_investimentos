@@ -11,6 +11,7 @@ import GetData from './components/DataComponent';
 import NovaSimulacaoAutomatica from './components/NovaSimulacaoAutomatica';
 import SelecionarAtivosAutomatica from './components/SelecionarAtivosAutomatica';
 import Historico from './components/Historico';
+import ResultadoSimulacaoAutomatica from './components/ResultadoSimulacaoAutomatica';
 
 //Estruturar rotas
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path:"/historico",
     element: <Historico/>
+  },
+  {
+    path:"/resultadosimulacaoautomatica",
+    element: <ResultadoSimulacaoAutomatica/>
   },
 ])
 

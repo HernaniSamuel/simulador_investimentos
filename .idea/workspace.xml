@@ -6,10 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ResultadosSimulacaoAutomatica.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/SelecionarAtivosAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SelecionarAtivosAutomatica.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" afterDir="false" />
@@ -59,7 +58,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/hdini/PycharmProjects/simulador_investimentos/templates&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/hdini/PycharmProjects/OpenDevin&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
