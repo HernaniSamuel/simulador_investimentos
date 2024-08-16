@@ -8,26 +8,27 @@ def pegar_inflacao(start_date, end_date):
     try:
         # Pegando os dados diretamente como DataFrame
         df = sgs.get(codigo_ipca, start=start_date, end=end_date)
-        print(f"Resposta da API (bruto): {df}")  # Log da resposta
 
         # Verificar se a resposta está no formato esperado
         if df.empty:
             print("Erro: DataFrame está vazio")
             return None
 
-        # Ajustando para acessar a coluna correta
-        coluna_ipca = str(codigo_ipca)  # Nome da coluna é o código do IPCA
-        if coluna_ipca not in df.columns:
-            print(f"Erro: Coluna '{coluna_ipca}' não encontrada no DataFrame")
-            return None
+        # Ajustar o DataFrame para ter duas colunas: Data e Valor
+        df = df.reset_index()  # Reseta o índice para que a data vire uma coluna
+        df.columns = ['Data', 'Valor']  # Renomeia as colunas
 
-        # Somando os valores de inflação
-        inflacao_total = df[coluna_ipca].sum()  # Usando a coluna correta para somar os valores
-        print(f"Inflação total calculada: {inflacao_total}")
-        return inflacao_total
+        return df
+
     except Exception as e:
         print(f"Erro ao pegar inflação: {e}")
         return None
+
+
+"""# Exemplo de uso
+inflacao = pegar_inflacao('2020-01-01', '2024-08-16')
+print(inflacao['Data'])
+"""
 
 
 def ajustar_inflacao(ipca_data, coluna_ipca, periodo_inicial, valor, data_final):

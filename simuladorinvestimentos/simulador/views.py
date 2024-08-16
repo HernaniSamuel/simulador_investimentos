@@ -63,9 +63,9 @@ def nova_simulacao_automatica(request):
             if inflacao_total is None:
                 return JsonResponse({'error': 'Failed to fetch inflation data'}, status=500)
 
-            # Converter para DataFrame e então para dicionário antes de salvar
-            inflacao_df = pd.DataFrame({'433': [inflacao_total]})
-            inflacao_dict = inflacao_df.to_dict()
+            # Convertendo o DataFrame para um formato serializável
+            inflacao_total['Data'] = inflacao_total['Data'].dt.strftime('%Y-%m-%d')
+            inflacao_dict = inflacao_total.to_dict(orient='records')
 
             print('Dados de inflação pegos')
 
@@ -95,18 +95,16 @@ def nova_simulacao_automatica(request):
             )
             print('Histórico criado')
 
-
             # Adicionar simulação ao histórico do usuário
             historico.simulacoes.add(simulacao_automatica)
             historico.save()
             print('Simulação adicionada ao histórico')
 
-
             return JsonResponse({
                 'message': 'Simulação automática criada com sucesso',
                 'simulacao_id': simulacao_automatica.id,
                 'carteira_id': carteira_automatica.id,
-                'inflacao_total': inflacao_total
+                'inflacao_total': inflacao_dict
             }, status=200)
 
         except Exception as e:
@@ -252,42 +250,42 @@ def resultado_simulacao_automatica(request):
                 return JsonResponse({'error': 'Missing simulacao_id'}, status=400)
 
             simulacao = SimulacaoAutomatica.objects.get(id=simulacao_id)
-            ipca_data = pd.DataFrame(simulacao.inflacao_total)
-            data_final = datetime.today().date()
 
-            if isinstance(simulacao.data_inicial, date):
-                data_inicial = simulacao.data_inicial
-            else:
-                data_inicial = safe_strptime(simulacao.data_inicial)
+            # Convertendo inflacao_total para DataFrame
+            ipca_data = pd.DataFrame(simulacao.inflacao_total)
+            ipca_data['Data'] = pd.to_datetime(ipca_data['Data'], format='%Y-%m-%d')
+            ipca_data.set_index('Data', inplace=True)
+
+            # Convertendo data_inicial e data_final para datetime
+            data_inicial = pd.to_datetime(simulacao.data_inicial)
+            data_final = pd.to_datetime(simulacao.data_final)
 
             if data_inicial is None or data_final is None:
                 return JsonResponse({'error': 'Invalid date format'}, status=400)
 
+            print('Ajustar aplicação inicial pela inflação')
             aplicacao_inicial_ajustada = ajustar_inflacao(
                 periodo_inicial=data_inicial,
                 ipca_data=ipca_data,
-                coluna_ipca='433',
+                coluna_ipca='Valor',
                 valor=simulacao.aplicacao_inicial,
                 data_final=data_final
             ) or 0
 
             aplicacoes_mensais_ajustadas = []
-            data_corrente = data_inicial
 
-            while data_corrente <= simulacao.data_final:
+            # Iterando sobre as datas válidas do DataFrame de inflação
+            datas_validas = ipca_data.loc[(ipca_data.index >= data_inicial) & (ipca_data.index <= data_final)].index
+
+            for data_corrente in datas_validas:
                 aplicacao_mensal_ajustada = ajustar_inflacao(
                     periodo_inicial=data_corrente,
                     ipca_data=ipca_data,
-                    coluna_ipca='433',
+                    coluna_ipca='Valor',
                     valor=simulacao.aplicacao_mensal,
                     data_final=data_final
                 ) or 0
                 aplicacoes_mensais_ajustadas.append(aplicacao_mensal_ajustada)
-                data_corrente += relativedelta(months=1)
-                # Ajusta o dia se estiver fora do intervalo para o novo mês
-                ultimo_dia_do_mes = monthrange(data_corrente.year, data_corrente.month)[1]
-                if data_corrente.day > ultimo_dia_do_mes:
-                    data_corrente = data_corrente.replace(day=ultimo_dia_do_mes)
 
             adjclose_carteira = []
             valor_total_carteira = aplicacao_inicial_ajustada
@@ -295,15 +293,19 @@ def resultado_simulacao_automatica(request):
             for mes_index, aplicacao_mensal in enumerate(aplicacoes_mensais_ajustadas):
                 valor_total_carteira += aplicacao_mensal
                 for ativo in simulacao.carteira_automatica.ativos.all():
-                    preco_ativo = ativo.precos[mes_index]['Adj Close']
-                    valor_investido = aplicacao_mensal * ativo.peso
-                    quantidade_comprada = valor_investido / preco_ativo
-                    ativo.posse += quantidade_comprada
-                    valor_total_carteira -= valor_investido
+                    # Convertendo precos de JSON para lista de dicionários
+                    precos = json.loads(ativo.precos)
+                    if mes_index < len(precos):
+                        preco_ativo = precos[mes_index]['Adj Close']
+                        valor_investido = aplicacao_mensal * ativo.peso
+                        quantidade_comprada = valor_investido / preco_ativo
+                        ativo.posse += quantidade_comprada
+                        valor_total_carteira -= valor_investido
 
                 valor_total_carteira_mes = sum(
-                    ativo.posse * ativo.precos[mes_index]['Adj Close']
+                    ativo.posse * json.loads(ativo.precos)[mes_index]['Adj Close']
                     for ativo in simulacao.carteira_automatica.ativos.all()
+                    if mes_index < len(json.loads(ativo.precos))
                 )
                 adjclose_carteira.append(valor_total_carteira_mes)
 
