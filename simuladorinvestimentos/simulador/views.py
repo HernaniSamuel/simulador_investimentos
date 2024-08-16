@@ -6,11 +6,9 @@ import yfinance as yf
 import logging
 import json
 import pandas as pd
-from dateutil.relativedelta import relativedelta
 from .models import Ativo, CarteiraAutomatica, SimulacaoAutomatica, Historico
 from datetime import datetime, timedelta, date
 from .utils import pegar_inflacao, ajustar_inflacao
-from calendar import monthrange
 
 
 logger = logging.getLogger(__name__)
@@ -238,6 +236,7 @@ def enviar_ativos(request):
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
+
 @login_required()
 @csrf_exempt
 def resultado_simulacao_automatica(request):
@@ -251,19 +250,16 @@ def resultado_simulacao_automatica(request):
 
             simulacao = SimulacaoAutomatica.objects.get(id=simulacao_id)
 
-            # Convertendo inflacao_total para DataFrame
             ipca_data = pd.DataFrame(simulacao.inflacao_total)
             ipca_data['Data'] = pd.to_datetime(ipca_data['Data'], format='%Y-%m-%d')
             ipca_data.set_index('Data', inplace=True)
 
-            # Convertendo data_inicial e data_final para datetime
             data_inicial = pd.to_datetime(simulacao.data_inicial)
             data_final = pd.to_datetime(simulacao.data_final)
 
             if data_inicial is None or data_final is None:
                 return JsonResponse({'error': 'Invalid date format'}, status=400)
 
-            print('Ajustar aplicação inicial pela inflação')
             aplicacao_inicial_ajustada = ajustar_inflacao(
                 periodo_inicial=data_inicial,
                 ipca_data=ipca_data,
@@ -273,10 +269,7 @@ def resultado_simulacao_automatica(request):
             ) or 0
 
             aplicacoes_mensais_ajustadas = []
-
-            # Iterando sobre as datas válidas do DataFrame de inflação
             datas_validas = ipca_data.loc[(ipca_data.index >= data_inicial) & (ipca_data.index <= data_final)].index
-
             for data_corrente in datas_validas:
                 aplicacao_mensal_ajustada = ajustar_inflacao(
                     periodo_inicial=data_corrente,
@@ -287,27 +280,35 @@ def resultado_simulacao_automatica(request):
                 ) or 0
                 aplicacoes_mensais_ajustadas.append(aplicacao_mensal_ajustada)
 
+            # Load assets only once for performance improvement
+            ativos = list(simulacao.carteira_automatica.ativos.all())
             adjclose_carteira = []
             valor_total_carteira = aplicacao_inicial_ajustada
 
             for mes_index, aplicacao_mensal in enumerate(aplicacoes_mensais_ajustadas):
                 valor_total_carteira += aplicacao_mensal
-                for ativo in simulacao.carteira_automatica.ativos.all():
-                    # Convertendo precos de JSON para lista de dicionários
+                for ativo in ativos:
                     precos = json.loads(ativo.precos)
                     if mes_index < len(precos):
                         preco_ativo = precos[mes_index]['Adj Close']
                         valor_investido = aplicacao_mensal * ativo.peso
-                        quantidade_comprada = valor_investido / preco_ativo
+                        quantidade_comprada = valor_investido / preco_ativo if preco_ativo > 0 else 0
                         ativo.posse += quantidade_comprada
                         valor_total_carteira -= valor_investido
 
+                        if preco_ativo <= 0:
+                            print(f"Alerta: Preço zero ou negativo detectado para {ativo.nome} no mês {mes_index}")
+
                 valor_total_carteira_mes = sum(
-                    ativo.posse * json.loads(ativo.precos)[mes_index]['Adj Close']
-                    for ativo in simulacao.carteira_automatica.ativos.all()
-                    if mes_index < len(json.loads(ativo.precos))
+                    a.posse * json.loads(a.precos)[mes_index]['Adj Close']
+                    for a in ativos
+                    if mes_index < len(json.loads(a.precos))
                 )
                 adjclose_carteira.append(valor_total_carteira_mes)
+
+            # Save changes if necessary
+            for ativo in ativos:
+                ativo.save()
 
             return JsonResponse({'adjclose_carteira': adjclose_carteira}, status=200)
 
@@ -320,6 +321,7 @@ def resultado_simulacao_automatica(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 def safe_strptime(date_str, format='%Y-%m-%d'):
     try:

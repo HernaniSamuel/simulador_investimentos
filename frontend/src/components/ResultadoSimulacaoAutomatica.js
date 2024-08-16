@@ -28,8 +28,10 @@ function ResultadoSimulacaoAutomatica() {
         }
 
         const data = await response.json();
+        console.log("Dados recebidos:", data); // Mostra os dados no console
         setResultado(data);
       } catch (error) {
+        console.error("Erro ao buscar dados:", error); // Mostra erros no console
         setError(error.message);
       } finally {
         setLoading(false);
@@ -73,6 +75,7 @@ function ResultadoSimulacaoAutomatica() {
         <div>
           <h1>Resultado da Simulação</h1>
           <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+          <pre>{JSON.stringify(resultado, null, 2)}</pre> {/* Mostra os dados formatados na tela */}
         </div>
       )}
     </div>
