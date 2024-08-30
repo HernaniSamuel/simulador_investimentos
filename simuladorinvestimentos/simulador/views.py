@@ -7,13 +7,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import SimulacaoAutomatica
-
 from .services.nova_simulacao_automatica_services import criar_simulacao_automatica
 from .services.pesquisar_ativos_services import pesquisar_ativo_por_ticker
 from .services.enviar_ativos_services import enviar_ativos_para_carteira
 from .services.resultado_simulacao_automatica_services import calcular_resultado_simulacao
 from .services.listar_historico_services import obter_historico_usuario
+from .services.abrir_simulacao_automatica_services import processar_simulacao_automatica
+
+from .models import SimulacaoAutomatica
 
 
 logger = logging.getLogger(__name__)
@@ -137,6 +138,29 @@ def listar_historico(request):
     if request.method == 'GET':
         historico_list = obter_historico_usuario(request.user)
         return JsonResponse(historico_list, safe=False)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required
+@csrf_exempt
+def abrir_simulacao_automatica(request):
+    if request.method == 'POST':
+        try:
+            # Carregar o corpo da requisição como JSON
+            body = json.loads(request.body)
+            simulacao_id = body.get('simulacao_id')
+
+            if not simulacao_id:
+                return JsonResponse({'error': 'Simulacao ID is required'}, status=400)
+
+            # Chama a função de serviço para processar a simulação
+            resposta, status_code = processar_simulacao_automatica(simulacao_id)
+
+            return JsonResponse(resposta, status=status_code)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 

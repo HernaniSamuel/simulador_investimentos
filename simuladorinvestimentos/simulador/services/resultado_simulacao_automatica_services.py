@@ -80,6 +80,12 @@ def calcular_resultado_simulacao(simulacao_id):
         # Criar um DataFrame com as datas e valores correspondentes
         df_resultado = pd.DataFrame(adjclose_carteira, columns=['Data', 'Valor'])
 
+        # Convertendo as datas para strings antes de salvar
+        df_resultado['Data'] = df_resultado['Data'].dt.strftime('%Y-%m-%d')
+
+        # Convertendo adjclose_carteira para um formato JSON
+        simulacao.resultados = df_resultado.to_dict(orient='records')
+
         # Coletar informações dos ativos
         ativos_info = [
             {
@@ -102,6 +108,9 @@ def calcular_resultado_simulacao(simulacao_id):
             },
             'resultado': df_resultado.to_dict(orient='records')
         }
+
+        # Save the simulation with the updated results
+        simulacao.save()
 
         # Save changes if necessary
         for ativo in ativos:

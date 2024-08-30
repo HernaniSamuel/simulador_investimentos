@@ -9,4 +9,5 @@ urlpatterns = [
     path('historico/', views.listar_historico, name='listar_historico'),
     path('excluir_simulacao/<int:simulacao_id>/', views.excluir_simulacao, name='excluir_simulacao'),
     path('resultado_simulacao_automatica/', views.resultado_simulacao_automatica, name='resultado_simulacao_automatica'),
+    path('abrir_simulacao_automatica/', views.abrir_simulacao_automatica, name='abrir_simulacao_automatica'),
 ]
