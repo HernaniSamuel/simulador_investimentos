@@ -1,38 +1,20 @@
-import { Link } from 'react-router-dom';
-import logo from '../logo.svg';
-import '../styles/App.css';
-
+import { Link, Outlet } from 'react-router-dom';
+import '../styles/App.css'; // Certifique-se de que este arquivo de estilo contém os estilos atualizados
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <Link
-          className="App-link"
-          to="/getdata"
-          rel="noopener noreferrer"
-        >
-          Ver dados
-        </Link>
-        <Link
-          className="App-link"
-          to="/novasimulacaoautomatica"
-          rel="noopener noreferrer"
-        >
-          Nova Simulação Automática
-        </Link>
-        <Link
-          className="App-link"
-          to="/historico"
-          rel="noopener noreferrer"
-        >
-          Histórico de Simulações
-        </Link>
+        <nav className="navbar">
+          <Link to="/" className="nav-link">Início</Link>
+          <Link to="/novasimulacaoautomatica" className="nav-link">Nova Simulação Automática</Link>
+          <Link to="/historico" className="nav-link">Histórico de Simulações</Link>
+          <Link to="/getdata" className="nav-link">Ver ativo</Link>
+        </nav>
       </header>
+      <main>
+        <Outlet /> {/* Este é o local onde o conteúdo das rotas será renderizado */}
+      </main>
     </div>
   );
 }

@@ -100,6 +100,7 @@ const NovaSimulacaoAutomatica = () => {
             required
           />
         </div>
+
         <div className="form-group">
           <label>Aplicação Inicial:</label>
           <input
@@ -107,8 +108,10 @@ const NovaSimulacaoAutomatica = () => {
             value={aplicacaoInicial}
             onChange={(e) => setAplicacaoInicial(e.target.value)}
             required
+            step="any"
           />
         </div>
+
         <div className="form-group">
           <label>Aplicação Mensal:</label>
           <input
@@ -116,8 +119,10 @@ const NovaSimulacaoAutomatica = () => {
             value={aplicacaoMensal}
             onChange={(e) => setAplicacaoMensal(e.target.value)}
             required
+            step="any"
           />
         </div>
+
         <div className="form-group">
           <label>Moeda Base:</label>
           <select

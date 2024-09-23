@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Historico.css';
 
 const Historico = () => {
@@ -72,6 +73,10 @@ const Historico = () => {
               <p>Data Final: {simulacao.data_final}</p>
               <p>Aplicação Inicial: {simulacao.aplicacao_inicial}</p>
               <p>Aplicação Mensal: {simulacao.aplicacao_mensal}</p>
+
+              <Link to={`/abrirsimulacaoautomatica/${simulacao.simulacao_id}`} className="open-simulacao-link">
+                Abrir Simulação
+              </Link>
               <button onClick={() => handleDelete(simulacao.simulacao_id)}>Excluir</button>
             </div>
           ))

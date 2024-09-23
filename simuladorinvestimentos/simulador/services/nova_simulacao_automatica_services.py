@@ -17,7 +17,7 @@ def criar_simulacao_automatica(nome, data_inicial, data_final, aplicacao_inicial
         moeda_base=moeda_base,
         valor_ativos=0
     )
-
+    print(f'Valor na carteira automática: {carteira_automatica.valor_em_dinheiro}') # Ver se a carteira realmente recebe o valor inicial previsto
     simulacao_automatica = SimulacaoAutomatica.objects.create(
         nome=nome,
         data_inicial=data_inicial,

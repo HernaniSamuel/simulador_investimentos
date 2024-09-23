@@ -1,40 +1,54 @@
 body {
-    font-family: Arial, sans-serif;
-  }
-  
-  .historico-container {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .historico-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .simulacao-card {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    padding: 20px;
-    margin: 10px;
-    width: 300px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  button {
-    display: block;
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    background-color: #ff4d4d;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #ff1a1a;
-  }
-  
+  font-family: Arial, sans-serif;
+}
+
+.historico-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.historico-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.simulacao-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin: 10px;
+  width: 300px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.open-simulacao-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #4CAF50; /* Cor de fundo verde */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.open-simulacao-link:hover {
+  background-color: #45a049; /* Cor de fundo mais escura ao passar o mouse */
+}
+
+button {
+  display: block;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  background-color: #ff4d4d;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ff1a1a;
+}

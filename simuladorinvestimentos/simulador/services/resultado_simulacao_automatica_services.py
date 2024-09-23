@@ -37,6 +37,7 @@ def calcular_resultado_simulacao(simulacao_id):
             data_final=data_final_extendida
         ) or 0
 
+
         aplicacoes_mensais_ajustadas = []
         datas_validas = ipca_data.loc[
             (ipca_data.index >= data_inicial) & (ipca_data.index <= data_final_extendida)].index
@@ -55,27 +56,26 @@ def calcular_resultado_simulacao(simulacao_id):
         adjclose_carteira = []
         valor_total_carteira = aplicacao_inicial_ajustada
 
-        for mes_index, (data_corrente, aplicacao_mensal) in enumerate(
-                zip(datas_validas, aplicacoes_mensais_ajustadas)):
+        for mes_index, (data_corrente, aplicacao_mensal) in enumerate(zip(datas_validas, aplicacoes_mensais_ajustadas)):
             valor_total_carteira += aplicacao_mensal
+            valor_inicial_mes = valor_total_carteira
             for ativo in ativos:
                 precos = json.loads(ativo.precos)
                 if mes_index < len(precos):
                     preco_ativo = precos[mes_index]['Adj Close']
-                    valor_investido = aplicacao_mensal * ativo.peso
+                    valor_investido = valor_inicial_mes * ativo.peso
                     quantidade_comprada = valor_investido / preco_ativo if preco_ativo > 0 else 0
                     ativo.posse += quantidade_comprada
-                    valor_total_carteira -= valor_investido
-
                     if preco_ativo <= 0:
                         print(f"Alerta: Preço zero ou negativo detectado para {ativo.nome} no mês {mes_index}")
-
+            valor_total_carteira -= valor_inicial_mes
             valor_total_carteira_mes = sum(
                 a.posse * json.loads(a.precos)[mes_index]['Adj Close']
                 for a in ativos
                 if mes_index < len(json.loads(a.precos))
             )
             adjclose_carteira.append((data_corrente, valor_total_carteira_mes))
+
 
         # Criar um DataFrame com as datas e valores correspondentes
         df_resultado = pd.DataFrame(adjclose_carteira, columns=['Data', 'Valor'])

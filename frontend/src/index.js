@@ -12,33 +12,40 @@ import NovaSimulacaoAutomatica from './components/NovaSimulacaoAutomatica';
 import SelecionarAtivosAutomatica from './components/SelecionarAtivosAutomatica';
 import Historico from './components/Historico';
 import ResultadoSimulacaoAutomatica from './components/ResultadoSimulacaoAutomatica';
+import AbrirSimulacaoAutomatica from './components/AbrirSimulacaoAutomatica';
 
-//Estruturar rotas
+
 const router = createBrowserRouter([
   {
     path:"/",
-    element: <App/>
-  },
-  {
-      path:"/getdata",
-      element: <GetData/>
-  },
-  {
-    path:"/novasimulacaoautomatica",
-    element: <NovaSimulacaoAutomatica/>
-  },
-  {
-    path:"/selecionarativosautomatica",
-    element: <SelecionarAtivosAutomatica/>
-  },
-  {
-    path:"/historico",
-    element: <Historico/>
-  },
-  {
-    path:"/resultadosimulacaoautomatica",
-    element: <ResultadoSimulacaoAutomatica/>
-  },
+    element: <App/>,
+    children: [
+        {
+          path:"/getdata",
+          element: <GetData/>
+        },
+        {
+          path:"/novasimulacaoautomatica",
+          element: <NovaSimulacaoAutomatica/>
+        },
+        {
+          path:"/selecionarativosautomatica",
+          element: <SelecionarAtivosAutomatica/>
+        },
+        {
+          path:"/historico",
+          element: <Historico/>
+        },
+        {
+          path:"/resultadosimulacaoautomatica",
+          element: <ResultadoSimulacaoAutomatica/>
+        },
+        {
+          path:"/abrirsimulacaoautomatica/:simulacaoId",
+          element: <AbrirSimulacaoAutomatica/>
+        },
+    ]
+  }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

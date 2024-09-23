@@ -6,7 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Historico.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Historico.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ResultadoSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ResultadoSimulacaoAutomatica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/Historico.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/Historico.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/NovaSimulacaoAutomatica.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/NovaSimulacaoAutomatica.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/ResultadoSimulacaoAutomatica.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/ResultadoSimulacaoAutomatica.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,13 +56,13 @@
     &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.manage.executor&quot;: &quot;Run&quot;,
     &quot;Python.printstructure.executor&quot;: &quot;Run&quot;,
-    &quot;Python.utils (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.utils (1).executor&quot;: &quot;Debug&quot;,
     &quot;Python.utils.executor&quot;: &quot;Run&quot;,
     &quot;Python.vaitomarnocu.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/hdini/PycharmProjects/OpenDevin&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/hdini/PycharmProjects/binanceRobot&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
