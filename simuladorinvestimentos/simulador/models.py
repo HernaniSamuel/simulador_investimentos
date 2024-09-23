@@ -8,6 +8,7 @@ class Ativo(models.Model):
     peso = models.FloatField()
     posse = models.FloatField()
     precos = models.JSONField(default=dict)
+    data_lancamento = models.DateField(null=True, blank=True)  # Adicionando a data de lançamento do ativo
 
     def __str__(self):
         return self.nome

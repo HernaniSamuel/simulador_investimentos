@@ -24,7 +24,7 @@ def calcular_resultado_simulacao(simulacao_id):
         data_final = pd.to_datetime(simulacao.data_final)
 
         if data_inicial is None or data_final is None:
-            return {'error': 'Invalid date format'}, 400
+            return {'error': 'Formato de data inválido'}, 400
 
         # Adicionando um mês ao período final
         data_final_extendida = data_final + pd.DateOffset(months=1)
@@ -36,7 +36,6 @@ def calcular_resultado_simulacao(simulacao_id):
             valor=simulacao.aplicacao_inicial,
             data_final=data_final_extendida
         ) or 0
-
 
         aplicacoes_mensais_ajustadas = []
         datas_validas = ipca_data.loc[
@@ -56,26 +55,50 @@ def calcular_resultado_simulacao(simulacao_id):
         adjclose_carteira = []
         valor_total_carteira = aplicacao_inicial_ajustada
 
-        for mes_index, (data_corrente, aplicacao_mensal) in enumerate(zip(datas_validas, aplicacoes_mensais_ajustadas)):
-            valor_total_carteira += aplicacao_mensal
+        for mes_index, data_corrente in enumerate(datas_validas):
+            # Adiciona a aplicação mensal ajustada
+            valor_total_carteira += aplicacoes_mensais_ajustadas[mes_index]
             valor_inicial_mes = valor_total_carteira
-            for ativo in ativos:
-                precos = json.loads(ativo.precos)
-                if mes_index < len(precos):
-                    preco_ativo = precos[mes_index]['Adj Close']
-                    valor_investido = valor_inicial_mes * ativo.peso
-                    quantidade_comprada = valor_investido / preco_ativo if preco_ativo > 0 else 0
-                    ativo.posse += quantidade_comprada
-                    if preco_ativo <= 0:
-                        print(f"Alerta: Preço zero ou negativo detectado para {ativo.nome} no mês {mes_index}")
-            valor_total_carteira -= valor_inicial_mes
-            valor_total_carteira_mes = sum(
-                a.posse * json.loads(a.precos)[mes_index]['Adj Close']
-                for a in ativos
-                if mes_index < len(json.loads(a.precos))
-            )
-            adjclose_carteira.append((data_corrente, valor_total_carteira_mes))
 
+            for ativo in ativos:
+                # Verifica se o ativo já foi lançado no mês corrente
+                if ativo.data_lancamento and data_corrente >= pd.Timestamp(ativo.data_lancamento):
+                    precos = json.loads(ativo.precos)
+
+                    # Calcula o índice relativo ao ativo
+                    meses_desde_lancamento = (data_corrente.year - pd.Timestamp(ativo.data_lancamento).year) * 12 + (
+                                data_corrente.month - pd.Timestamp(ativo.data_lancamento).month)
+
+                    if meses_desde_lancamento < len(precos):
+                        preco_ativo = precos[meses_desde_lancamento]['Adj Close']
+
+                        if preco_ativo > 0:
+                            valor_investido = valor_inicial_mes * ativo.peso
+                            quantidade_comprada = valor_investido / preco_ativo
+                            ativo.posse += quantidade_comprada
+                            valor_total_carteira -= valor_investido
+                        else:
+                            print(
+                                f"Alerta: Preço zero ou negativo detectado para {ativo.nome} no mês {meses_desde_lancamento}")
+                    else:
+                        pass
+                        # print(f"Alerta: {ativo.nome} não existia no mês {meses_desde_lancamento}. Dinheiro mantido na conta.")
+                else:
+                    pass
+                    # print(f"{ativo.nome} ainda não existia no mês {data_corrente}. Dinheiro mantido na conta.")
+
+            # Calcula o valor da carteira com base no valor atual dos ativos
+            valor_total_ativos_mes = sum(
+                a.posse * json.loads(a.precos)[(data_corrente.year - pd.Timestamp(a.data_lancamento).year) * 12 + (
+                            data_corrente.month - pd.Timestamp(a.data_lancamento).month)]['Adj Close']
+                for a in ativos
+                if a.data_lancamento and data_corrente >= pd.Timestamp(a.data_lancamento)
+                and (data_corrente.year - pd.Timestamp(a.data_lancamento).year) * 12 + (
+                            data_corrente.month - pd.Timestamp(a.data_lancamento).month) < len(json.loads(a.precos))
+            )
+
+            valor_total_carteira_mes = valor_total_ativos_mes + valor_total_carteira
+            adjclose_carteira.append((data_corrente, valor_total_carteira_mes))
 
         # Criar um DataFrame com as datas e valores correspondentes
         df_resultado = pd.DataFrame(adjclose_carteira, columns=['Data', 'Valor'])

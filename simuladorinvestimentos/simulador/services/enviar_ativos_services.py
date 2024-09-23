@@ -39,6 +39,9 @@ def enviar_ativos_para_carteira(data):
         precos_df = yf.download(ticker, start=simulacao_automatica.data_inicial,
                                 end=simulacao_automatica.data_final, interval='1mo')
 
+        # Pegar a data de início de negociação do ativo
+        data_lancamento = precos_df.index.min().date() if not precos_df.empty else None
+
         # Se a moeda do ativo for diferente da moeda da carteira, faça a conversão
         if moeda_ativo != moeda_carteira:
             print(f"Convertendo preços de {moeda_ativo} para {moeda_carteira}")
@@ -69,9 +72,9 @@ def enviar_ativos_para_carteira(data):
             peso=peso,
             posse=0,
             nome=nome,
-            precos=json.dumps(precos),  # Serializar para JSON
+            precos=json.dumps(precos),
+            data_lancamento=data_lancamento  # Salvando a data de lançamento do ativo
         )
-
         carteira_automatica.ativos.add(ativo)
 
     return {'status': 'success'}, 200

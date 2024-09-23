@@ -6,15 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Historico.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Historico.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/ResultadoSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ResultadoSimulacaoAutomatica.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/Historico.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/Historico.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/NovaSimulacaoAutomatica.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/NovaSimulacaoAutomatica.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/ResultadoSimulacaoAutomatica.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/ResultadoSimulacaoAutomatica.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/enviar_ativos_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/enviar_ativos_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/resultado_simulacao_automatica_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/resultado_simulacao_automatica_services.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
