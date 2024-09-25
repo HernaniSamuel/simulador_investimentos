@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 from ..models import SimulacaoAutomatica
 from ..utils import ajustar_inflacao
+from dateutil.relativedelta import relativedelta
 
 
 def safe_strptime(date_str, format='%Y-%m-%d'):
@@ -23,23 +24,23 @@ def calcular_resultado_simulacao(simulacao_id):
         data_inicial = pd.to_datetime(simulacao.data_inicial)
         data_final = pd.to_datetime(simulacao.data_final)
 
+        data_final = data_final + relativedelta(months=1)
+
         if data_inicial is None or data_final is None:
             return {'error': 'Formato de data inválido'}, 400
-
-        # Adicionando um mês ao período final
-        data_final_extendida = data_final + pd.DateOffset(months=1)
 
         aplicacao_inicial_ajustada = ajustar_inflacao(
             periodo_inicial=data_inicial,
             ipca_data=ipca_data,
             coluna_ipca='Valor',
             valor=simulacao.aplicacao_inicial,
-            data_final=data_final_extendida
+            data_final=data_final
         ) or 0
+        # print(f'\033[1;33mAplicação inicial ajustada pela inflação: {aplicacao_inicial_ajustada}\033[m')
 
         aplicacoes_mensais_ajustadas = []
         datas_validas = ipca_data.loc[
-            (ipca_data.index >= data_inicial) & (ipca_data.index <= data_final_extendida)].index
+            (ipca_data.index >= data_inicial) & (ipca_data.index <= data_final)].index
 
         for data_corrente in datas_validas:
             aplicacao_mensal_ajustada = ajustar_inflacao(
@@ -47,9 +48,10 @@ def calcular_resultado_simulacao(simulacao_id):
                 ipca_data=ipca_data,
                 coluna_ipca='Valor',
                 valor=simulacao.aplicacao_mensal,
-                data_final=data_final_extendida
+                data_final=data_final
             ) or 0
             aplicacoes_mensais_ajustadas.append(aplicacao_mensal_ajustada)
+            # print(f'\033[1;33mAplicações mensais ajustadas pela inflação: {aplicacoes_mensais_ajustadas}\033[m')
 
         ativos = list(simulacao.carteira_automatica.ativos.all())
         adjclose_carteira = []
@@ -59,24 +61,28 @@ def calcular_resultado_simulacao(simulacao_id):
             # Adiciona a aplicação mensal ajustada
             valor_total_carteira += aplicacoes_mensais_ajustadas[mes_index]
             valor_inicial_mes = valor_total_carteira
-
+            # print(f'\033[1;33mValor inicial no mês {data_corrente}: {valor_inicial_mes}\033[m')
             for ativo in ativos:
                 # Verifica se o ativo já foi lançado no mês corrente
                 if ativo.data_lancamento and data_corrente >= pd.Timestamp(ativo.data_lancamento):
                     precos = json.loads(ativo.precos)
-
+                    # print(f'\033[1;33mPreços carregados: {precos}\033[m')
                     # Calcula o índice relativo ao ativo
                     meses_desde_lancamento = (data_corrente.year - pd.Timestamp(ativo.data_lancamento).year) * 12 + (
                                 data_corrente.month - pd.Timestamp(ativo.data_lancamento).month)
 
                     if meses_desde_lancamento < len(precos):
                         preco_ativo = precos[meses_desde_lancamento]['Adj Close']
-
+                        # print(f'\033[1;33mpreco_ativo: {preco_ativo}\033[m')
                         if preco_ativo > 0:
                             valor_investido = valor_inicial_mes * ativo.peso
+                            # print(f'\033[1;33mValor investido: {valor_investido}\033[m')
                             quantidade_comprada = valor_investido / preco_ativo
+                            # print(f'\033[1;33mQuantidade comprada: {quantidade_comprada}\033[m')
                             ativo.posse += quantidade_comprada
+                            # print(f'\033[1;33mPosse do ativo: {ativo.posse}\033[m')
                             valor_total_carteira -= valor_investido
+                            # print(f'\033[1;33mValor total da carteira: {valor_total_carteira}\033[m')
                         else:
                             print(
                                 f"Alerta: Preço zero ou negativo detectado para {ativo.nome} no mês {meses_desde_lancamento}")
@@ -96,10 +102,14 @@ def calcular_resultado_simulacao(simulacao_id):
                 and (data_corrente.year - pd.Timestamp(a.data_lancamento).year) * 12 + (
                             data_corrente.month - pd.Timestamp(a.data_lancamento).month) < len(json.loads(a.precos))
             )
+            # print(f'\033[1;33mValor total de ativos no mês: {valor_total_ativos_mes}\033[m')
 
             valor_total_carteira_mes = valor_total_ativos_mes + valor_total_carteira
+            # print(f'\033[1;33mValor total da carteira no mês: {valor_total_carteira_mes}\033[m')
             adjclose_carteira.append((data_corrente, valor_total_carteira_mes))
+            # print(f'\033[1;33mAdjclose carteira: {adjclose_carteira}\033[m')
 
+        print(f'último mês de adjclose_carteira: {adjclose_carteira[-1]}')
         # Criar um DataFrame com as datas e valores correspondentes
         df_resultado = pd.DataFrame(adjclose_carteira, columns=['Data', 'Valor'])
 
@@ -137,6 +147,8 @@ def calcular_resultado_simulacao(simulacao_id):
 
         # Save changes if necessary
         for ativo in ativos:
+            # print(f'\033[1;32mPosse correta: {ativo.posse}')
+            # print(f'\033[1;32m Antepenúltimo preço: {ativo.precos[-3]}, penúltimo preço: {ativo.precos[-2]}, último preço: {ativo.precos[-1]}\033[m')
             ativo.save()
 
         return resposta, 200

@@ -1,5 +1,6 @@
 import json
 import yfinance as yf
+from dateutil.relativedelta import relativedelta
 from ..models import CarteiraAutomatica, SimulacaoAutomatica, Ativo
 
 
@@ -35,9 +36,16 @@ def enviar_ativos_para_carteira(data):
         nome = ativo_info['longName']
         moeda_ativo = ativo_info['currency']
 
-        # Pegar preços dos ativos
-        precos_df = yf.download(ticker, start=simulacao_automatica.data_inicial,
-                                end=simulacao_automatica.data_final, interval='1mo')
+        # Converter strings de data em objetos datetime
+        data_inicial = simulacao_automatica.data_inicial
+        data_final = simulacao_automatica.data_final
+
+        # Adicionar 1 mês à data final para incluir o último mês na simulação
+        data_final_inclusiva = data_final + relativedelta(months=1)
+
+        # Pegar preços dos ativos incluindo o mês final
+        precos_df = yf.download(ticker, start=data_inicial, end=data_final_inclusiva, interval='1mo')
+        # print(f'Ativo pego de {data_inicial} até {data_final_inclusiva}')
 
         # Pegar a data de início de negociação do ativo
         data_lancamento = precos_df.index.min().date() if not precos_df.empty else None
@@ -51,8 +59,7 @@ def enviar_ativos_para_carteira(data):
                 cambio_df = cambio_cache[moeda_ativo]
             else:
                 cambio_ticker = f"{moeda_ativo}{moeda_carteira}=X"
-                cambio_df = yf.download(cambio_ticker, start=simulacao_automatica.data_inicial,
-                                        end=simulacao_automatica.data_final, interval='1mo')
+                cambio_df = yf.download(cambio_ticker, start=data_inicial, end=data_final_inclusiva, interval='1mo')
                 cambio_cache[moeda_ativo] = cambio_df  # Armazenar no cache
 
             # Garantindo que a data do câmbio corresponde à data dos preços do ativo
@@ -66,7 +73,7 @@ def enviar_ativos_para_carteira(data):
         for preco in precos:
             preco['Date'] = preco['Date'].isoformat()  # Converter Timestamp para string ISO 8601
 
-        print(f"Criando objeto Ativo para {ticker}")
+        # print(f"Criando objeto Ativo para {ticker}")
         ativo = Ativo.objects.create(
             ticker=ticker,
             peso=peso,
@@ -76,5 +83,6 @@ def enviar_ativos_para_carteira(data):
             data_lancamento=data_lancamento  # Salvando a data de lançamento do ativo
         )
         carteira_automatica.ativos.add(ativo)
+        # print(f'\033[1;34m{ativo.precos}\033[m')
 
     return {'status': 'success'}, 200
