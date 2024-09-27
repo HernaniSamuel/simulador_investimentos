@@ -1,6 +1,11 @@
 from bcb import sgs
 from datetime import datetime
 import pandas as pd
+import numpy as np
+
+
+def arredondar_para_baixo(valor):
+    return np.floor(valor * 100) / 100
 
 
 def pegar_inflacao(start_date, end_date):

@@ -2,6 +2,7 @@ import json
 import yfinance as yf
 from dateutil.relativedelta import relativedelta
 from ..models import CarteiraAutomatica, SimulacaoAutomatica, Ativo
+from ..utils import arredondar_para_baixo
 
 
 def enviar_ativos_para_carteira(data):
@@ -45,7 +46,13 @@ def enviar_ativos_para_carteira(data):
 
         # Pegar preços dos ativos incluindo o mês final
         precos_df = yf.download(ticker, start=data_inicial, end=data_final_inclusiva, interval='1mo')
-        # print(f'Ativo pego de {data_inicial} até {data_final_inclusiva}')
+
+        # Substituir NaN pelo preço do mês anterior (forward fill)
+        precos_df['Adj Close'] = precos_df['Adj Close'].ffill()
+
+        # Se ainda houver NaN após o ffill, substitua por 0
+        precos_df['Adj Close'] = arredondar_para_baixo(precos_df['Adj Close'].fillna(0))
+        print(precos_df['Adj Close']) # ver preços arredondados
 
         # Pegar a data de início de negociação do ativo
         data_lancamento = precos_df.index.min().date() if not precos_df.empty else None
@@ -66,14 +73,15 @@ def enviar_ativos_para_carteira(data):
             cambio_df = cambio_df.reindex(precos_df.index, method='ffill')
 
             # Convertendo preços para a moeda da carteira
-            precos_df['Adj Close'] = precos_df['Adj Close'] * cambio_df['Adj Close']
+            precos_df['Adj Close'] = arredondar_para_baixo(precos_df['Adj Close'] * cambio_df['Adj Close'])
+            print(precos_df['Adj Close']) # ver preços convertidos arredondados
 
         # Converter DataFrame para lista de dicionários com datas como strings
         precos = precos_df.reset_index().to_dict(orient='records')
         for preco in precos:
             preco['Date'] = preco['Date'].isoformat()  # Converter Timestamp para string ISO 8601
 
-        # print(f"Criando objeto Ativo para {ticker}")
+        # Criar objeto Ativo
         ativo = Ativo.objects.create(
             ticker=ticker,
             peso=peso,
@@ -83,6 +91,5 @@ def enviar_ativos_para_carteira(data):
             data_lancamento=data_lancamento  # Salvando a data de lançamento do ativo
         )
         carteira_automatica.ativos.add(ativo)
-        # print(f'\033[1;34m{ativo.precos}\033[m')
 
     return {'status': 'success'}, 200
