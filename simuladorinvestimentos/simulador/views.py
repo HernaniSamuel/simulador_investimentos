@@ -8,13 +8,14 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 from .services.nova_simulacao_automatica_services import criar_simulacao_automatica
+from .services.nova_simulacao_manual_services import criar_simulacao_manual
 from .services.pesquisar_ativos_services import pesquisar_ativo_por_ticker
 from .services.enviar_ativos_services import enviar_ativos_para_carteira
 from .services.resultado_simulacao_automatica_services import calcular_resultado_simulacao
 from .services.listar_historico_services import obter_historico_usuario
 from .services.abrir_simulacao_automatica_services import processar_simulacao_automatica
 
-from .models import SimulacaoAutomatica
+from .models import SimulacaoAutomatica, SimulacaoManual
 
 
 logger = logging.getLogger(__name__)
@@ -63,15 +64,14 @@ def nova_simulacao_automatica(request):
             return JsonResponse({'error': 'Missing parameters'}, status=400)
 
         try:
-            simulacao_automatica, carteira_automatica, inflacao_dict = criar_simulacao_automatica(
+            simulacao_automatica, carteira_automatica = criar_simulacao_automatica(
                 nome, data_inicial, data_final, aplicacao_inicial, aplicacao_mensal, moeda_base, request.user
             )
 
             return JsonResponse({
                 'message': 'Simulação automática criada com sucesso',
                 'simulacao_id': simulacao_automatica.id,
-                'carteira_id': carteira_automatica.id,
-                'inflacao_total': inflacao_dict
+                'carteira_id': carteira_automatica.id
             }, status=200)
 
         except Exception as e:
@@ -166,7 +166,50 @@ def abrir_simulacao_automatica(request):
 
 @login_required()
 @csrf_exempt
-def excluir_simulacao(request, simulacao_id):
+def excluir_simulacao_automatica(request, simulacao_id):
     simulacao = get_object_or_404(SimulacaoAutomatica, id=simulacao_id, usuario=request.user)
     simulacao.delete()
     return JsonResponse({'message': 'Simulação excluída com sucesso'})
+
+
+@login_required()
+@csrf_exempt
+def excluir_simulacao_manual(request, simulacao_id):
+    simulacao = get_object_or_404(SimulacaoManual, id=simulacao_id, usuario=request.user)
+    simulacao.delete()
+    return JsonResponse({'message': 'Simulação excluída com sucesso'})
+
+
+@login_required()
+@csrf_exempt
+def nova_simulacao_manual(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        nome = body.get('nome')
+        data_inicial = body.get('data_inicial')
+        moeda_base = body.get('moeda_base')
+
+        if not all([nome, data_inicial, moeda_base]):
+            return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+        try:
+            simulacao_manual, carteira_manual = criar_simulacao_manual(
+                nome, data_inicial, moeda_base, request.user
+            )
+
+            return JsonResponse({
+                'message': 'Simulação manual criada com sucesso',
+                'simulacao_id': simulacao_manual.id,
+                'carteira_id': carteira_manual.id
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required()
+@csrf_exempt
+def simulacao_manual(request):
+    pass #banana

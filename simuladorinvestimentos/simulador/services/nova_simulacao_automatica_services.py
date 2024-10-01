@@ -34,7 +34,7 @@ def criar_simulacao_automatica(nome, data_inicial, data_final, aplicacao_inicial
         defaults={'data_criacao': timezone.now()}
     )
 
-    historico.simulacoes.add(simulacao_automatica)
+    historico.simulacoes_automaticas.add(simulacao_automatica)
     historico.save()
 
-    return simulacao_automatica, carteira_automatica, inflacao_dict
+    return simulacao_automatica, carteira_automatica

@@ -52,7 +52,6 @@ def enviar_ativos_para_carteira(data):
 
         # Se ainda houver NaN após o ffill, substitua por 0
         precos_df['Adj Close'] = arredondar_para_baixo(precos_df['Adj Close'].fillna(0))
-        print(precos_df['Adj Close']) # ver preços arredondados
 
         # Pegar a data de início de negociação do ativo
         data_lancamento = precos_df.index.min().date() if not precos_df.empty else None
@@ -74,7 +73,6 @@ def enviar_ativos_para_carteira(data):
 
             # Convertendo preços para a moeda da carteira
             precos_df['Adj Close'] = arredondar_para_baixo(precos_df['Adj Close'] * cambio_df['Adj Close'])
-            print(precos_df['Adj Close']) # ver preços convertidos arredondados
 
         # Converter DataFrame para lista de dicionários com datas como strings
         precos = precos_df.reset_index().to_dict(orient='records')
