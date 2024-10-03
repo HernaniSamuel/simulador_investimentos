@@ -15,7 +15,13 @@ from .services.resultado_simulacao_automatica_services import calcular_resultado
 from .services.listar_historico_services import obter_historico_usuario
 from .services.abrir_simulacao_automatica_services import processar_simulacao_automatica
 
+# imports provisórios
 from .models import SimulacaoAutomatica, SimulacaoManual
+from .utils import ajustar_inflacao
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from .utils import arredondar_para_baixo
+import pandas as pd
 
 
 logger = logging.getLogger(__name__)
@@ -196,7 +202,7 @@ def nova_simulacao_manual(request):
             simulacao_manual, carteira_manual = criar_simulacao_manual(
                 nome, data_inicial, moeda_base, request.user
             )
-
+            print(f'Simulação manual criada e registrada! {simulacao_manual.id}')
             return JsonResponse({
                 'message': 'Simulação manual criada com sucesso',
                 'simulacao_id': simulacao_manual.id,
@@ -209,7 +215,134 @@ def nova_simulacao_manual(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-@login_required()
+@login_required
 @csrf_exempt
-def simulacao_manual(request):
-    pass #banana
+def simulacao_manual(request, simulacao_id):
+    if request.method == 'GET':
+        try:
+            # Obtém a simulação pelo ID fornecido
+            simulacao_manual = get_object_or_404(SimulacaoManual, id=simulacao_id)
+
+
+            # Extrai os dados necessários da simulação e dos ativos
+            ativos = simulacao_manual.carteira_manual.ativos.all()
+            line_data = {
+                'valorTotal': [ativo.peso for ativo in ativos],  # Exemplo de valores
+                'valorAtivos': [ativo.posse for ativo in ativos],  # Exemplo de valores
+            }
+            pie_data = [
+                {'name': ativo.nome, 'y': ativo.peso} for ativo in ativos
+            ]
+            cash = simulacao_manual.carteira_manual.valor_em_dinheiro
+
+            # Pega o mês e ano atuais da simulação
+            mes_atual = simulacao_manual.mes_atual.strftime('%Y-%m-%d')  # Formata o mês
+
+
+            # Resposta em formato JSON
+            response_data = {
+                'lineData': line_data,
+                'pieData': pie_data,
+                'cash': cash,
+                'mes_atual': mes_atual,
+            }
+
+            return JsonResponse(response_data, safe=False)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método inválido. Apenas GET é permitido.'}, status=405)
+
+
+@login_required
+@csrf_exempt
+def modificar_dinheiro_view(request, simulacao_id):
+    if request.method == 'POST':
+        try:
+            # Obtém a simulação correspondente
+            simulacao = SimulacaoManual.objects.get(id=simulacao_id, usuario=request.user)
+            carteira = simulacao.carteira_manual
+
+            # Carrega os dados do POST
+            data = json.loads(request.body)
+            valor = float(data.get('valor', 0))
+            valor = arredondar_para_baixo(valor)
+            ajustar_inflacao_flag = data.get('ajustarInflacao', False)
+
+            # Converter JSONField para DataFrame
+            ipca_data_json = simulacao.inflacao_total  # Isso é um dicionário
+            ipca_data = pd.DataFrame(ipca_data_json)
+
+            # Verificar se 'data' está nas colunas
+            if 'Data' in ipca_data.columns:
+                # Converter 'data' para datetime e definir como índice
+                ipca_data['Data'] = pd.to_datetime(ipca_data['Data'])
+                ipca_data.set_index('Data', inplace=True)
+            else:
+                return JsonResponse({'error': "A coluna 'Data' não está presente em ipca_data."}, status=500)
+
+            # Exibir informações para depuração
+            print("ipca_data após ajustes:", ipca_data.head())
+
+            coluna_ipca = "Valor"
+            periodo_inicial = datetime.today().date()
+            data_final = simulacao.mes_atual.date()
+
+            # Se o valor for 0, não faz nada
+            if valor == 0:
+                return JsonResponse({'message': 'Nenhuma alteração foi feita, valor 0.'}, status=400)
+
+            # Se o valor de valor_em_dinheiro for None, definimos como 0
+            valor_atual_em_dinheiro = carteira.valor_em_dinheiro if carteira.valor_em_dinheiro is not None else 0
+
+            # Se a checkbox estiver marcada, ajusta o valor usando a inflação
+            if ajustar_inflacao_flag:
+                valor_ajustado = ajustar_inflacao(ipca_data, coluna_ipca, periodo_inicial, valor, data_final)
+                if valor_ajustado is None:
+                    return JsonResponse({'error': 'Erro ao ajustar o valor pela inflação.'}, status=500)
+                valor = arredondar_para_baixo(valor_ajustado)
+
+            # Modifica o valor em caixa da carteira
+            novo_valor = max(valor_atual_em_dinheiro + valor, 0)  # Impede valor negativo
+            carteira.valor_em_dinheiro = novo_valor
+            carteira.save()
+
+            return JsonResponse({'message': 'Valor atualizado com sucesso.', 'novo_valor': novo_valor})
+
+        except SimulacaoManual.DoesNotExist:
+            return JsonResponse({'error': 'Simulação não encontrada.'}, status=404)
+        except Exception as e:
+            print(f"Erro na view modificar_dinheiro: {e}")
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método inválido. Apenas POST é permitido.'}, status=405)
+
+
+@login_required
+@csrf_exempt
+def avancar_mes_view(request, simulacao_id):
+    if request.method == 'POST':
+        try:
+            # Obtém a simulação correspondente
+            simulacao = SimulacaoManual.objects.get(id=simulacao_id, usuario=request.user)
+
+            # Adiciona um mês à data atual da simulação
+            mes_atual = simulacao.mes_atual
+            novo_mes = mes_atual + relativedelta(months=1)
+
+            # Atualiza a simulação com o novo mês
+            simulacao.mes_atual = novo_mes
+            simulacao.save()
+
+            return JsonResponse({
+                'message': 'Simulação avançada para o próximo mês.',
+                'mes_atual': novo_mes.strftime('%Y-%m-%d'),  # Formato legível para exibir
+            })
+
+        except SimulacaoManual.DoesNotExist:
+            return JsonResponse({'error': 'Simulação não encontrada.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método inválido. Apenas POST é permitido.'}, status=405)
