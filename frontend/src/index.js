@@ -7,12 +7,13 @@ import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 //Importar componentes
-import GetData from './components/DataComponent';
 import NovaSimulacaoAutomatica from './components/NovaSimulacaoAutomatica';
 import SelecionarAtivosAutomatica from './components/SelecionarAtivosAutomatica';
 import Historico from './components/Historico';
 import ResultadoSimulacaoAutomatica from './components/ResultadoSimulacaoAutomatica';
 import AbrirSimulacaoAutomatica from './components/AbrirSimulacaoAutomatica';
+import NovaSimulacaoManual from './components/NovaSimulacaoManual';
+import SimulacaoManual from './components/SimulacaoManual';
 
 
 const router = createBrowserRouter([
@@ -20,10 +21,6 @@ const router = createBrowserRouter([
     path:"/",
     element: <App/>,
     children: [
-        {
-          path:"/getdata",
-          element: <GetData/>
-        },
         {
           path:"/novasimulacaoautomatica",
           element: <NovaSimulacaoAutomatica/>
@@ -43,6 +40,14 @@ const router = createBrowserRouter([
         {
           path:"/abrirsimulacaoautomatica/:simulacaoId",
           element: <AbrirSimulacaoAutomatica/>
+        },
+        {
+          path:"/novasimulacaomanual",
+          element: <NovaSimulacaoManual/>
+        },
+        {
+          path:"/simulacaomanual",
+          element: <SimulacaoManual/>
         },
     ]
   }

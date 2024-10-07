@@ -21,7 +21,12 @@ const Historico = () => {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setHistorico(data);
+
+        if (Array.isArray(data)) {
+          setHistorico(data);
+        } else {
+          throw new Error('Unexpected data format');
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -32,9 +37,9 @@ const Historico = () => {
     fetchHistorico();
   }, []);
 
-  const handleDelete = async (simulacaoId) => {
+  const handleDeleteManual = async (simulacaoId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/excluir_simulacao/${simulacaoId}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/excluir_simulacao_manual/${simulacaoId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -44,21 +49,50 @@ const Historico = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      setHistorico(historico.map(h => ({
-        ...h,
-        simulacoes: h.simulacoes.filter(simulacao => simulacao.simulacao_id !== simulacaoId)
-      })));
+      // Atualizar o estado após exclusão
+      setHistorico(prevHistorico =>
+        prevHistorico.map(h => ({
+          ...h,
+          simulacoes_automaticas: h.simulacoes_automaticas.filter(simulacao => simulacao.simulacao_id !== simulacaoId),
+          simulacoes_manuais: h.simulacoes_manuais.filter(simulacao => simulacao.simulacao_id !== simulacaoId),
+        }))
+      );
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleDeleteAutomatica = async (simulacaoId) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/excluir_simulacao_automatica/${simulacaoId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // Atualizar o estado após exclusão
+      setHistorico(prevHistorico =>
+        prevHistorico.map(h => ({
+          ...h,
+          simulacoes_automaticas: h.simulacoes_automaticas.filter(simulacao => simulacao.simulacao_id !== simulacaoId),
+          simulacoes_manuais: h.simulacoes_manuais.filter(simulacao => simulacao.simulacao_id !== simulacaoId),
+        }))
+      );
     } catch (error) {
       setError(error.message);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Carregando...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Erro: {error}</div>;
   }
 
   return (
@@ -66,20 +100,43 @@ const Historico = () => {
       <h1>Histórico de Simulações</h1>
       <div className="historico-list">
         {historico.map(item => (
-          item.simulacoes.map(simulacao => (
-            <div key={simulacao.simulacao_id} className="simulacao-card">
-              <h2>{simulacao.nome}</h2>
-              <p>Data Inicial: {simulacao.data_inicial}</p>
-              <p>Data Final: {simulacao.data_final}</p>
-              <p>Aplicação Inicial: {simulacao.aplicacao_inicial}</p>
-              <p>Aplicação Mensal: {simulacao.aplicacao_mensal}</p>
-
-              <Link to={`/abrirsimulacaoautomatica/${simulacao.simulacao_id}`} className="open-simulacao-link">
-                Abrir Simulação
-              </Link>
-              <button onClick={() => handleDelete(simulacao.simulacao_id)}>Excluir</button>
+          <div key={item.id}>
+            <div className="simulacoes-tipo">
+              <h2>Simulações Automáticas</h2>
+              <div className="simulacoes-grid">
+                {Array.isArray(item.simulacoes_automaticas) && item.simulacoes_automaticas.map(simulacao => (
+                  <div key={simulacao.simulacao_id} className="simulacao-card">
+                    <h3>{simulacao.nome}</h3>
+                    <p>Data Inicial: {simulacao.data_inicial}</p>
+                    <p>Data Final: {simulacao.data_final}</p>
+                    <p>Aplicação Inicial: {simulacao.aplicacao_inicial}</p>
+                    <p>Aplicação Mensal: {simulacao.aplicacao_mensal}</p>
+                    <Link to={`/abrirsimulacaoautomatica/${simulacao.simulacao_id}`} className="open-simulacao-link">
+                      Abrir Simulação
+                    </Link>
+                    <button onClick={() => handleDeleteAutomatica(simulacao.simulacao_id)}>Excluir</button>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))
+
+            <div className="simulacoes-tipo">
+              <h2>Simulações Manuais</h2>
+              <div className="simulacoes-grid">
+                {Array.isArray(item.simulacoes_manuais) && item.simulacoes_manuais.map(simulacao => (
+                  <div key={simulacao.simulacao_id} className="simulacao-card">
+                    <h3>{simulacao.nome}</h3>
+                    <p>Data Inicial: {simulacao.data_inicial}</p>
+                    <p>Valor Total da Carteira: {simulacao.valor_total_carteira}</p>
+                    <Link to={`/abrirsimulacaomanual/${simulacao.simulacao_id}`} className="open-simulacao-link">
+                      Abrir Simulação
+                    </Link>
+                    <button onClick={() => handleDeleteManual(simulacao.simulacao_id)}>Excluir</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>

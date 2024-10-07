@@ -1,54 +1,70 @@
-body {
-  font-family: Arial, sans-serif;
-}
-
+/* Estilo geral do container */
 .historico-container {
-  text-align: center;
-  margin-top: 20px;
+  padding: 20px;
 }
 
+/* Estilo da lista de histórico */
 .historico-list {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
 }
 
+/* Estilo para cada tipo de simulação */
+.simulacoes-tipo {
+  margin-bottom: 40px;
+}
+
+.simulacoes-tipo h2 {
+  margin-bottom: 20px;
+}
+
+/* Estilo da grade de cards */
+.simulacoes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 20px;
+}
+
+/* Estilo dos cards */
 .simulacao-card {
   border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  padding: 20px;
-  margin: 10px;
-  width: 300px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.simulacao-card h3 {
+  margin-top: 0;
+}
+
+.simulacao-card p {
+  margin: 5px 0;
 }
 
 .open-simulacao-link {
   display: inline-block;
-  margin-top: 10px;
-  padding: 10px 15px;
-  background-color: #4CAF50; /* Cor de fundo verde */
-  color: white;
+  margin: 10px 10px 0px 0px;
+  border-radius:5px;
+  color: #ffffff;
+  background-color: rgb(5, 109, 5);
+  padding:10px;
   text-decoration: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .open-simulacao-link:hover {
-  background-color: #45a049; /* Cor de fundo mais escura ao passar o mouse */
+  text-decoration: underline;
 }
 
-button {
-  display: block;
+.simulacao-card button {
   margin-top: 10px;
-  padding: 10px;
+  padding: 8px 12px;
+  background-color: #dc3545;
+  color: #fff;
   border: none;
-  background-color: #ff4d4d;
-  color: white;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #ff1a1a;
+.simulacao-card button:hover {
+  background-color: #c82333;
 }

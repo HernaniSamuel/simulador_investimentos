@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/NovaSimulacaoManual.css';
 
-const NovaSimulacaoAutomatica = () => {
+const NovaSimulacaoManual = () => {
   const [nome, setNome] = useState('');
   const [dataInicial, setDataInicial] = useState('');
- 
-  const [aplicacaoInicial, setAplicacaoInicial] = useState('');
-  const [aplicacaoMensal, setAplicacaoMensal] = useState('');
   const [moedaBase, setMoedaBase] = useState('BRL'); // Default to BRL
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -16,12 +13,6 @@ const NovaSimulacaoAutomatica = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Verificação de incoerências
-    if (new Date(dataFinal) < new Date(dataInicial)) {
-      setError('A data final não pode ser anterior à data inicial.');
-      return;
-    }
 
     const csrfToken = getCookie('csrftoken');
 
@@ -34,9 +25,6 @@ const NovaSimulacaoAutomatica = () => {
       body: JSON.stringify({
         nome,
         data_inicial: dataInicial,
-        data_final: dataFinal,
-        aplicacao_inicial: aplicacaoInicial,
-        aplicacao_mensal: aplicacaoMensal,
         moeda_base: moedaBase
       })
     });
@@ -47,7 +35,7 @@ const NovaSimulacaoAutomatica = () => {
       setMessage(data.message);
       setError('');
       // Passar os IDs da simulação e carteira como parte do estado de navegação
-      navigate('/selecionarativosautomatica', { state: { simulacaoId: data.simulacao_id, carteiraId: data.carteira_id } });
+      navigate('/simulacaomanual', { state: { simulacaoId: data.simulacao_id, carteiraId: data.carteira_id } });
     } else {
       setMessage('');
       setError(data.error);
@@ -71,7 +59,7 @@ const NovaSimulacaoAutomatica = () => {
 
   return (
     <div className="form-container">
-      <h2>Criar Nova Simulação Automática</h2>
+      <h2>Criar Nova Simulação Manual</h2>
       <form onSubmit={handleSubmit} className="simulacao-form">
         <div className="form-group">
           <label>Nome da Simulação:</label>
@@ -92,38 +80,6 @@ const NovaSimulacaoAutomatica = () => {
           />
         </div>
         <div className="form-group">
-          <label>Data Final:</label>
-          <input
-            type="date"
-            value={dataFinal}
-            onChange={(e) => setDataFinal(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Aplicação Inicial:</label>
-          <input
-            type="number"
-            value={aplicacaoInicial}
-            onChange={(e) => setAplicacaoInicial(e.target.value)}
-            required
-            step="any"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Aplicação Mensal:</label>
-          <input
-            type="number"
-            value={aplicacaoMensal}
-            onChange={(e) => setAplicacaoMensal(e.target.value)}
-            required
-            step="any"
-          />
-        </div>
-
-        <div className="form-group">
           <label>Moeda Base:</label>
           <select
             value={moedaBase}
@@ -142,4 +98,4 @@ const NovaSimulacaoAutomatica = () => {
   );
 };
 
-export default NovaSimulacaoAutomatica;
+export default NovaSimulacaoManual;

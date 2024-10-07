@@ -147,7 +147,7 @@ def listar_historico(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-@login_required
+@login_required()
 @csrf_exempt
 def abrir_simulacao_automatica(request):
     if request.method == 'POST':
@@ -215,7 +215,7 @@ def nova_simulacao_manual(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-@login_required
+@login_required()
 @csrf_exempt
 def simulacao_manual(request, simulacao_id):
     if request.method == 'GET':
@@ -255,7 +255,7 @@ def simulacao_manual(request, simulacao_id):
     return JsonResponse({'error': 'Método inválido. Apenas GET é permitido.'}, status=405)
 
 
-@login_required
+@login_required()
 @csrf_exempt
 def modificar_dinheiro_view(request, simulacao_id):
     if request.method == 'POST':
@@ -319,7 +319,7 @@ def modificar_dinheiro_view(request, simulacao_id):
     return JsonResponse({'error': 'Método inválido. Apenas POST é permitido.'}, status=405)
 
 
-@login_required
+@login_required()
 @csrf_exempt
 def avancar_mes_view(request, simulacao_id):
     if request.method == 'POST':

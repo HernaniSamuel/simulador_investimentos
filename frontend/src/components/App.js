@@ -8,8 +8,8 @@ function App() {
         <nav className="navbar">
           <Link to="/" className="nav-link">Início</Link>
           <Link to="/novasimulacaoautomatica" className="nav-link">Nova Simulação Automática</Link>
+          <Link to="/novasimulacaomanual" className="nav-link">Nova Simulação Manual</Link>
           <Link to="/historico" className="nav-link">Histórico de Simulações</Link>
-          <Link to="/getdata" className="nav-link">Ver ativo</Link>
         </nav>
       </header>
       <main>

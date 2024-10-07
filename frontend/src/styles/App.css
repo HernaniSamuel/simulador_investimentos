@@ -7,7 +7,21 @@
   justify-content: center;
   align-items: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  position: fixed; /* Altere para position: fixed */
+  top: 0; /* Mantém o header no topo da página */
+  left: 0;
+  right: 0;
+  width: 100%; /* Ocupa a largura total da tela */
+  max-height: 150px;
+  z-index: 1000; /* Garante que o header fique acima de outros elementos */
 }
+
+main {
+  padding: 2em;
+  margin-top: 150px; /* Adiciona um espaço para compensar a altura do header fixo */
+  width: 80vw;
+}
+
 
 .navbar {
   display: flex;
@@ -25,6 +39,3 @@
   text-decoration: underline;
 }
 
-main {
-  padding: 2em;
-}
