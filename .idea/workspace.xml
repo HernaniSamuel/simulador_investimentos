@@ -5,22 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/CandlestickChart.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/DataComponent.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/FormComponent.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Historico.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Historico.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoManual.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoManual.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/DataComponent.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/FormComponent.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/Historico.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/Historico.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/NovaSimulacaoManual.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/NovaSimulacaoManual.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/SimulacaoManual.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/SimulacaoManual.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

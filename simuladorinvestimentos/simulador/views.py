@@ -304,7 +304,12 @@ def modificar_dinheiro_view(request, simulacao_id):
                 valor = arredondar_para_baixo(valor_ajustado)
 
             # Modifica o valor em caixa da carteira
-            novo_valor = max(valor_atual_em_dinheiro + valor, 0)  # Impede valor negativo
+            novo_valor = valor_atual_em_dinheiro + valor
+
+            # Impede que o novo valor seja negativo (mantém pelo menos zero)
+            if novo_valor < 0:
+                novo_valor = 0
+
             carteira.valor_em_dinheiro = novo_valor
             carteira.save()
 
@@ -346,3 +351,4 @@ def avancar_mes_view(request, simulacao_id):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método inválido. Apenas POST é permitido.'}, status=405)
+
