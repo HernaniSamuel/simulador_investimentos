@@ -1,4 +1,3 @@
-import yfinance as yf
 import logging
 import json
 
@@ -21,6 +20,7 @@ from .utils import ajustar_inflacao
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from .utils import arredondar_para_baixo
+import yfinance as yf
 import pandas as pd
 
 
@@ -30,28 +30,6 @@ logger = logging.getLogger(__name__)
 @login_required()
 def index(request):
     return render(request, 'index.html')
-
-
-@login_required()
-@csrf_exempt
-def get_data(request):
-    if request.method == 'POST':
-        body = json.loads(request.body)
-        ticker = body.get('ticker')
-        start_date = body.get('start_date')
-        end_date = body.get('end_date')
-        interval = body.get('interval')
-
-        if not ticker or not start_date or not end_date or not interval:
-            return JsonResponse({'error': 'Missing parameters'}, status=400)
-
-        data = yf.download(ticker, start=start_date, end=end_date, interval=interval)
-        data.reset_index(inplace=True)  # Resetando o índice para que a data esteja disponível como coluna
-        data_dict = data.to_dict(orient='records')
-
-        return JsonResponse(data_dict, safe=False)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @login_required()
@@ -352,3 +330,114 @@ def avancar_mes_view(request, simulacao_id):
 
     return JsonResponse({'error': 'Método inválido. Apenas POST é permitido.'}, status=405)
 
+
+@login_required
+@csrf_exempt
+def negociar_ativos_pesquisa(request, simulacao_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido. Use POST.'}, status=405)
+
+    try:
+        # Lê os dados do corpo da requisição
+        body = json.loads(request.body)
+        print(f"Request body: {body}")  # Log do corpo da requisição
+        ticker = body.get('ticker')
+
+        if not ticker:
+            print("Erro: Ticker não fornecido.")  # Log de erro
+            return JsonResponse({'error': 'Ticker não fornecido.'}, status=400)
+
+        # Obtém a simulação pelo ID fornecido
+        print(f"Buscando simulação com ID: {simulacao_id}")  # Log antes de buscar a simulação
+        simulacao = get_object_or_404(SimulacaoManual, id=simulacao_id)
+        print(f"Simulação encontrada: {simulacao}")  # Log após encontrar a simulação
+
+        # Obtém a data atual da simulação e converte para date se necessário
+        data_atual_simulacao = simulacao.mes_atual.date() if isinstance(simulacao.mes_atual, datetime) else simulacao.mes_atual
+        print(f"Data atual da simulação: {data_atual_simulacao}")  # Log da data atual
+
+        # Busca o histórico do ativo usando o yfinance
+        print(f"Buscando histórico do ativo: {ticker}")  # Log antes de buscar o histórico
+        ativo = yf.Ticker(ticker)
+        historico = ativo.history(period='max')
+        print(f"Histórico obtido para {ticker}: {historico.head()}")  # Log das primeiras linhas do histórico
+
+        if historico.empty:
+            print("Histórico vazio para o ticker fornecido.")  # Log se o histórico estiver vazio
+            return JsonResponse({'exists': False, 'error': 'Sem histórico de preços para o ticker fornecido.'}, status=404)
+
+        # Pega a primeira data disponível nos dados históricos
+        data_inicio_ticker = historico.index[0].date()
+        print(f"Data de início do ticker {ticker}: {data_inicio_ticker}")  # Log da data de início do ticker
+
+        # Verifica se a data de início do ativo é anterior ou igual à data atual da simulação
+        if data_inicio_ticker <= data_atual_simulacao:
+            print(f"O ativo {ticker} existe e tem dados antes da data atual da simulação.")
+            return JsonResponse({'exists': True, 'ticker': ticker, 'data_inicio': str(data_inicio_ticker)})
+        else:
+            print(f"O ativo {ticker} não tem dados antes da data atual da simulação.")
+            return JsonResponse({'exists': False, 'ticker': ticker, 'data_inicio': str(data_inicio_ticker)})
+
+    except json.JSONDecodeError:
+        print("Erro de JSONDecode: Corpo da requisição inválido.")  # Log de erro de JSON
+        return JsonResponse({'error': 'Corpo da requisição inválido. Certifique-se de que está em formato JSON.'}, status=400)
+    except Exception as e:
+        print(f"Erro inesperado: {str(e)}")  # Log de qualquer outra exceção
+        return JsonResponse({'error': f'Ocorreu um erro: {str(e)}'}, status=500)
+
+# Será feita a limpeza do terminal na refatoração views & services
+
+
+@login_required
+@csrf_exempt
+def negociar_ativos(request, simulacao_id):
+    if request.method == 'POST':
+        try:
+            # Lê os dados do corpo da requisição
+            body = json.loads(request.body)
+            print(f"Request body: {body}")
+            ticker = body.get('ticker')
+
+            if not ticker:
+                print("Erro: Ticker não fornecido.")
+                return JsonResponse({'error': 'Ticker não fornecido.'}, status=400)
+
+            # Obtém a simulação manual associada ao ID e ao usuário autenticado
+            print(f"Buscando simulação com ID: {simulacao_id}")
+            simulacao = get_object_or_404(SimulacaoManual, id=simulacao_id, usuario=request.user)
+            carteira_manual = simulacao.carteira_manual
+
+            # Busca o histórico do ativo usando o yfinance
+            print(f"Buscando histórico do ativo: {ticker}")
+            ativo = yf.Ticker(ticker)
+            historico = ativo.history(period='1y')
+
+            # Processa o histórico para o formato esperado pelo gráfico de velas
+            historico_lista = [
+                {
+                    'date': str(index.date()),
+                    'open': row['Open'],
+                    'high': row['High'],
+                    'low': row['Low'],
+                    'close': row['Close']
+                }
+                for index, row in historico.iterrows()
+            ]
+
+            # Prepara a resposta com o histórico de preços e o valor disponível em caixa da carteira manual
+            response_data = {
+                'ticker': ticker,
+                'historico': historico_lista,
+                'dinheiro_em_caixa': carteira_manual.valor_em_dinheiro
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        except json.JSONDecodeError:
+            print("Erro de JSONDecode: Corpo da requisição inválido.")
+            return JsonResponse({'error': 'Corpo da requisição inválido. Certifique-se de que está em formato JSON.'}, status=400)
+        except Exception as e:
+            print(f"Erro inesperado: {str(e)}")
+            return JsonResponse({'error': f'Ocorreu um erro: {str(e)}'}, status=500)
+    else:
+        return JsonResponse({'error': 'Método não permitido. Use POST.'}, status=405)

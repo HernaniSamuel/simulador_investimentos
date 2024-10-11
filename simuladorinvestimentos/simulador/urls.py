@@ -11,9 +11,11 @@ urlpatterns = [
     path('resultado_simulacao_automatica/', views.resultado_simulacao_automatica, name='resultado_simulacao_automatica'),
     path('abrir_simulacao_automatica/', views.abrir_simulacao_automatica, name='abrir_simulacao_automatica'),
 
-    path('getdata/', views.get_data, name='get_data'),  # será a pesquisa e análise de ativos da simulação manual
     path('nova_simulacao_manual/', views.nova_simulacao_manual, name='nova_simulacao_manual'),
     path('simulacao_manual/<int:simulacao_id>/', views.simulacao_manual, name='simulacao_manual'),
     path('modificar_dinheiro/<int:simulacao_id>/', views.modificar_dinheiro_view, name='modificar_dinheiro'),
     path('avancar_mes/<int:simulacao_id>/', views.avancar_mes_view, name='avancar_mes'),
+    path('negociar_ativos_pesquisa/<int:simulacao_id>/', views.negociar_ativos_pesquisa, name='negociar_ativos_pesquisa'),
+    path('negociar_ativos/<int:simulacao_id>/', views.negociar_ativos, name='negociar_ativos'),
+
 ]

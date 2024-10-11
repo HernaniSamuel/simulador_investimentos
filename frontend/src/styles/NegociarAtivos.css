@@ -1,0 +1,106 @@
+
+  
+  .controles-container h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .controles-container span {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .input-valor {
+    width: 120px;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .botao-compra,
+  .botao-venda {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .botao-compra {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .botao-compra:hover {
+    background-color: #218838;
+  }
+  
+  .botao-venda {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .botao-venda:hover {
+    background-color: #c82333;
+  }
+  
+  .grafico-container {
+    flex-grow: 1;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    max-height: 500px; /* Limita a altura máxima do gráfico */
+    overflow: hidden;
+  }
+  
+  .negociar-ativos-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  .controles-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .controles-container {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .input-valor {
+      width: 100%;
+      max-width: 200px;
+    }
+  
+    .botao-compra,
+    .botao-venda {
+      width: 100%;
+      margin-top: 5px;
+    }
+  }
+  
+  .input-valor:focus,
+  .botao-compra:focus,
+  .botao-venda:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+  }
+  

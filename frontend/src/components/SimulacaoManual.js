@@ -189,9 +189,15 @@ const SimulacaoManual = () => {
               Ajustar poder de compra
             </label>
           </div>
-          <Link className="link" to="/historico" target="_blank">
-            Negociar Ativos
-          </Link>
+        <Link
+         className='link'
+          to={{
+            pathname: '/negociarativospesquisa',
+          }}
+          state={{ simulacaoId }} // Certifique-se de que simulacaoId tenha um valor válido aqui
+        >
+          Negociar Ativos
+        </Link>
           <span>{dataAtual ? formatarData(dataAtual) : ''}</span>
           <button onClick={handleAvancarMes}>Próximo Mês</button>
         </div>

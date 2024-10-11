@@ -1,0 +1,89 @@
+/* Estilo geral */
+.pesquisar-ativo-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Formulário */
+  .pesquisar-ativo-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pesquisar-ativo-input-container {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+  
+  .pesquisar-ativo-input {
+    flex-grow: 1;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  
+  .pesquisar-ativo-input:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  .pesquisar-ativo-button {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+  }
+  
+  .pesquisar-ativo-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Mensagem de erro */
+  .error-snackbar {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem 1.25rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .error-snackbar p {
+    margin: 0;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .pesquisar-ativo-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+  
+    .pesquisar-ativo-input,
+    .pesquisar-ativo-button {
+      font-size: 0.9rem;
+    }
+  }
+  

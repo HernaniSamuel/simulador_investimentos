@@ -14,6 +14,8 @@ import ResultadoSimulacaoAutomatica from './components/ResultadoSimulacaoAutomat
 import AbrirSimulacaoAutomatica from './components/AbrirSimulacaoAutomatica';
 import NovaSimulacaoManual from './components/NovaSimulacaoManual';
 import SimulacaoManual from './components/SimulacaoManual';
+import NegociarAtivosPesquisa from './components/NegociarAtivosPesquisa';
+import NegociarAtivos from './components/NegociarAtivos';
 
 
 const router = createBrowserRouter([
@@ -48,6 +50,14 @@ const router = createBrowserRouter([
         {
           path:"/simulacaomanual",
           element: <SimulacaoManual/>
+        },
+        {
+          path:"/negociarativospesquisa",
+          element: <NegociarAtivosPesquisa/>
+        },
+        {
+          path:"/negociarativos",
+          element: <NegociarAtivos/>
         },
     ]
   }
