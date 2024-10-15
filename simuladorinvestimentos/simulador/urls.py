@@ -17,5 +17,6 @@ urlpatterns = [
     path('avancar_mes/<int:simulacao_id>/', views.avancar_mes_view, name='avancar_mes'),
     path('negociar_ativos_pesquisa/<int:simulacao_id>/', views.negociar_ativos_pesquisa, name='negociar_ativos_pesquisa'),
     path('negociar_ativos/<int:simulacao_id>/', views.negociar_ativos, name='negociar_ativos'),
-
+    path('buy_sell_actives/<int:simulacao_id>/', views.buy_sell_actives, name='buy_sell_actives'),
 ]
+

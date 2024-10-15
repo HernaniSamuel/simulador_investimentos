@@ -5,6 +5,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+
 
 from .services.nova_simulacao_automatica_services import criar_simulacao_automatica
 from .services.nova_simulacao_manual_services import criar_simulacao_manual
@@ -15,14 +17,13 @@ from .services.listar_historico_services import obter_historico_usuario
 from .services.abrir_simulacao_automatica_services import processar_simulacao_automatica
 
 # imports provisórios
-from .models import SimulacaoAutomatica, SimulacaoManual
+from .models import SimulacaoAutomatica, SimulacaoManual, Ativo
 from .utils import ajustar_inflacao
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from .utils import arredondar_para_baixo
 import yfinance as yf
 import pandas as pd
-
 
 logger = logging.getLogger(__name__)
 
@@ -395,22 +396,56 @@ def negociar_ativos(request, simulacao_id):
         try:
             # Lê os dados do corpo da requisição
             body = json.loads(request.body)
-            print(f"Request body: {body}")
             ticker = body.get('ticker')
 
             if not ticker:
-                print("Erro: Ticker não fornecido.")
                 return JsonResponse({'error': 'Ticker não fornecido.'}, status=400)
 
             # Obtém a simulação manual associada ao ID e ao usuário autenticado
-            print(f"Buscando simulação com ID: {simulacao_id}")
             simulacao = get_object_or_404(SimulacaoManual, id=simulacao_id, usuario=request.user)
             carteira_manual = simulacao.carteira_manual
 
+            # Obter 'mes_atual' da simulação
+            mes_atual = simulacao.mes_atual
+
+            # Tornar 'mes_atual' "aware" se for "naive"
+            if timezone.is_naive(mes_atual):
+                mes_atual = timezone.make_aware(mes_atual, timezone.get_default_timezone())
+
+            # Obter a data atual "aware"
+            data_atual = timezone.now()
+
+            # Garantir que 'mes_atual' não seja no futuro
+            if mes_atual > data_atual:
+                mes_atual = data_atual
+
+            # Calcular a data de início (um ano antes de 'mes_atual')
+            data_inicio = mes_atual - timedelta(days=365)
+
             # Busca o histórico do ativo usando o yfinance
-            print(f"Buscando histórico do ativo: {ticker}")
             ativo = yf.Ticker(ticker)
-            historico = ativo.history(period='1y')
+            historico = ativo.history(start=data_inicio, end=mes_atual)
+
+            if historico.empty:
+                return JsonResponse({'error': 'Não há dados históricos para o período especificado.'}, status=404)
+
+            # Obtém o último preço de fechamento
+            ultimo_preco = historico['Close'].iloc[-1]
+
+            # Obtém a moeda do ativo (por exemplo, USD, BRL, etc.)
+            moeda_ativo = ativo.info.get('currency', 'USD')  # Default para USD se não disponível
+            moeda_carteira = carteira_manual.moeda_base  # Assumindo que a carteira tem o campo 'moeda'
+
+            # Se a moeda do ativo for diferente da moeda da carteira, faça a conversão
+            if moeda_ativo != moeda_carteira:
+                # Usar o yfinance para obter a taxa de câmbio
+                conversao_ticker = f"{moeda_ativo}{moeda_carteira}=X"  # Exemplo: 'USDBRL=X'
+                taxa_conversao = yf.Ticker(conversao_ticker).history(period='1d')['Close'].iloc[-1]
+
+                # Converte o preço do ativo
+                ultimo_preco_convertido = ultimo_preco * taxa_conversao
+            else:
+                ultimo_preco_convertido = ultimo_preco  # Já está na moeda correta
 
             # Processa o histórico para o formato esperado pelo gráfico de velas
             historico_lista = [
@@ -424,20 +459,154 @@ def negociar_ativos(request, simulacao_id):
                 for index, row in historico.iterrows()
             ]
 
-            # Prepara a resposta com o histórico de preços e o valor disponível em caixa da carteira manual
+            # Aqui buscamos a quantidade de ativos do ticker na carteira
+            ativo_na_carteira = carteira_manual.ativos.filter(ticker=ticker).first()  # Substitua pelo campo correto
+            quantidade_ativo = ativo_na_carteira.posse if ativo_na_carteira else 0  # Verifica se o ativo está na carteira
+
+            # Prepara a resposta com o histórico de preços, valor em caixa e quantidade do ativo na carteira
             response_data = {
                 'ticker': ticker,
                 'historico': historico_lista,
-                'dinheiro_em_caixa': carteira_manual.valor_em_dinheiro
+                'dinheiro_em_caixa': carteira_manual.valor_em_dinheiro,
+                'preco_convertido': ultimo_preco_convertido,  # Preço convertido
+                'moeda_ativo': moeda_ativo,
+                'moeda_carteira': moeda_carteira,
+                'quantidade_ativo': quantidade_ativo  # Quantidade do ativo na carteira
             }
 
             return JsonResponse(response_data, status=200)
 
         except json.JSONDecodeError:
-            print("Erro de JSONDecode: Corpo da requisição inválido.")
             return JsonResponse({'error': 'Corpo da requisição inválido. Certifique-se de que está em formato JSON.'}, status=400)
         except Exception as e:
-            print(f"Erro inesperado: {str(e)}")
             return JsonResponse({'error': f'Ocorreu um erro: {str(e)}'}, status=500)
     else:
         return JsonResponse({'error': 'Método não permitido. Use POST.'}, status=405)
+
+
+@login_required
+@csrf_exempt
+def buy_sell_actives(request, simulacao_id):
+    if request.method == 'POST':
+        try:
+            print("[DEBUG] Início da função buy_sell_actives")
+            # Lê os dados da requisição
+            body = json.loads(request.body)
+            print(f"[DEBUG] Corpo da requisição: {body}")
+            tipo_operacao = body.get('tipo')  # 'compra' ou 'venda'
+            valor = float(body.get('valor'))  # Valor de compra ou venda em moeda da carteira
+            preco_convertido = float(body.get('precoConvertido'))  # Preço convertido do ativo
+            ticker = body.get('ticker')  # Ticker do ativo sendo negociado
+
+            print(f"[DEBUG] tipo_operacao: {tipo_operacao}, valor: {valor}, preco_convertido: {preco_convertido}, ticker: {ticker}")
+
+            if not tipo_operacao or valor <= 0:
+                print("[ERROR] Operação inválida ou valor menor ou igual a zero.")
+                return JsonResponse({'error': 'Operação inválida ou valor menor ou igual a zero.'}, status=400)
+
+            if not ticker:
+                print("[ERROR] Ticker não fornecido.")
+                return JsonResponse({'error': 'Ticker não fornecido.'}, status=400)
+
+            # Obtenha a simulação manual e a carteira associada
+            simulacao = get_object_or_404(SimulacaoManual, id=simulacao_id, usuario=request.user)
+            carteira_manual = simulacao.carteira_manual
+
+            print(f"[DEBUG] Simulação ID: {simulacao_id}, Carteira Manual ID: {carteira_manual.id}")
+
+            # Verifica se o ativo já existe na carteira dessa simulação
+            ativo_na_carteira = carteira_manual.ativos.filter(ticker=ticker).first()
+            print(f"[DEBUG] Ativo na carteira: {ativo_na_carteira}")
+
+            # Caso seja uma operação de compra
+            if tipo_operacao == 'compra':
+                # Verifica se há dinheiro suficiente
+                if valor > carteira_manual.valor_em_dinheiro:
+                    print("[ERROR] Saldo insuficiente.")
+                    return JsonResponse({'error': 'Saldo insuficiente.'}, status=400)
+
+                # Atualiza o valor em dinheiro na carteira
+                carteira_manual.valor_em_dinheiro -= valor
+                print(f"[DEBUG] Novo valor em dinheiro na carteira: {carteira_manual.valor_em_dinheiro}")
+
+                # Calcula a quantidade comprada
+                quantidade_comprada = valor / preco_convertido
+                print(f"[DEBUG] Quantidade comprada: {quantidade_comprada}")
+
+                if ativo_na_carteira:
+                    # Atualiza a posse do ativo existente na carteira
+                    ativo_na_carteira.posse += quantidade_comprada
+                    ativo_na_carteira.save()
+                    print(f"[DEBUG] Nova posse do ativo existente: {ativo_na_carteira.posse}")
+                else:
+                    # Se o ativo não está na carteira, cria um novo ativo e o adiciona à carteira
+                    novo_ativo = Ativo.objects.create(
+                        ticker=ticker,
+                        nome=ticker,  # Aqui você pode ajustar para o nome real do ativo, se disponível
+                        peso=0.0,  # Definir peso como 0 por enquanto ou outra lógica que faça sentido
+                        posse=quantidade_comprada,
+                        precos={},  # Definir precos como vazio por enquanto
+                        data_lancamento=None  # Pode ajustar conforme necessário
+                    )
+                    carteira_manual.ativos.add(novo_ativo)
+                    print(f"[DEBUG] Novo ativo criado e adicionado à carteira: {novo_ativo}")
+
+                # Salva as mudanças na carteira
+                carteira_manual.save()
+                print("[DEBUG] Carteira manual atualizada e salva.")
+
+                # Recarrega o ativo_na_carteira para obter a nova posse
+                ativo_na_carteira = carteira_manual.ativos.filter(ticker=ticker).first()
+                print(f"[DEBUG] Ativo recarregado: {ativo_na_carteira}")
+
+                return JsonResponse({
+                    'novoDinheiroDisponivel': carteira_manual.valor_em_dinheiro,
+                    'novaQuantidadeAtivo': ativo_na_carteira.posse,
+                    'ticker': ticker
+                }, status=200)
+
+            # Caso seja uma operação de venda
+            elif tipo_operacao == 'venda':
+                if not ativo_na_carteira:
+                    print("[ERROR] Ativo não encontrado na carteira.")
+                    return JsonResponse({'error': 'Ativo não encontrado na carteira.'}, status=404)
+
+                # Calcula a quantidade de ativos a vender
+                quantidade_vendida = valor / preco_convertido
+                print(f"[DEBUG] Quantidade a ser vendida: {quantidade_vendida}")
+
+                # Verifica se o usuário tem ativos suficientes para vender
+                if quantidade_vendida > ativo_na_carteira.posse:
+                    print("[ERROR] Quantidade insuficiente de ativos para vender.")
+                    return JsonResponse({'error': 'Quantidade insuficiente de ativos para vender.'}, status=400)
+
+                # Atualiza a posse do ativo e o valor em dinheiro na carteira
+                ativo_na_carteira.posse -= quantidade_vendida
+                carteira_manual.valor_em_dinheiro += valor
+
+                ativo_na_carteira.save()
+                carteira_manual.save()
+
+                print(f"[DEBUG] Nova posse do ativo após venda: {ativo_na_carteira.posse}")
+                print(f"[DEBUG] Novo valor em dinheiro na carteira após venda: {carteira_manual.valor_em_dinheiro}")
+
+                return JsonResponse({
+                    'novoDinheiroDisponivel': carteira_manual.valor_em_dinheiro,
+                    'novaQuantidadeAtivo': ativo_na_carteira.posse,
+                    'ticker': ticker
+                }, status=200)
+
+            else:
+                print("[ERROR] Tipo de operação inválido.")
+                return JsonResponse({'error': 'Tipo de operação inválido.'}, status=400)
+
+        except json.JSONDecodeError:
+            print("[ERROR] Corpo da requisição inválido.")
+            return JsonResponse({'error': 'Corpo da requisição inválido.'}, status=400)
+        except Exception as e:
+            print(f"[ERROR] Erro inesperado: {str(e)}")
+            return JsonResponse({'error': f'Erro inesperado: {str(e)}'}, status=500)
+
+    print("[ERROR] Método não permitido. Use POST.")
+    return JsonResponse({'error': 'Método não permitido. Use POST.'}, status=405)
+

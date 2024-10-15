@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Historico.css';
 
 const Historico = () => {
   const [historico, setHistorico] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHistorico = async () => {
@@ -128,9 +129,13 @@ const Historico = () => {
                     <h3>{simulacao.nome}</h3>
                     <p>Data Inicial: {simulacao.data_inicial}</p>
                     <p>Valor Total da Carteira: {simulacao.valor_total_carteira}</p>
-                    <Link to={`/abrirsimulacaomanual/${simulacao.simulacao_id}`} className="open-simulacao-link">
+                    <button
+                      className="open-simulacao-link"
+                      onClick={() => navigate('/simulacaomanual', { state: { simulacaoId: simulacao.simulacao_id, carteiraId: simulacao.carteira_id } })}
+                    >
                       Abrir Simulação
-                    </Link>
+                    </button>
+
                     <button onClick={() => handleDeleteManual(simulacao.simulacao_id)}>Excluir</button>
                   </div>
                 ))}

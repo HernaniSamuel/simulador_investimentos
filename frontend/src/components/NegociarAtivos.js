@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
@@ -22,6 +22,11 @@ const NegociarAtivos = () => {
   const [valor, setValor] = useState('');
   const chartRef = useRef(null);
 
+  const [precoConvertido, setPrecoConvertido] = useState(0);
+  const [moedaAtivo, setMoedaAtivo] = useState('');
+  const [moedaCarteira, setMoedaCarteira] = useState('');
+  const [quantidadeAtivo, setQuantidadeAtivo] = useState(0); // Definido o estado para a quantidade de ativos
+
   useEffect(() => {
     if (simulacaoId && ticker) {
       fetchDadosSimulacao(simulacaoId, ticker);
@@ -33,7 +38,7 @@ const NegociarAtivos = () => {
       console.error('Ticker ou Simulação ID não fornecidos.');
       return;
     }
-  
+
     try {
       console.log('Enviando requisição com:', { simulacaoId, ticker });
       const response = await fetch(`http://127.0.0.1:8000/api/negociar_ativos/${simulacaoId}/`, {
@@ -43,12 +48,12 @@ const NegociarAtivos = () => {
         },
         body: JSON.stringify({ ticker })
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        console.log('Dados recebidos:', data);
-        const historico = data.historico || [];
+        const { historico, dinheiro_em_caixa, preco_convertido, moeda_ativo, moeda_carteira, quantidade_ativo } = data;
+
         const processedData = historico.map(item => [
           new Date(item.date).getTime(),
           parseFloat(item.open),
@@ -56,26 +61,76 @@ const NegociarAtivos = () => {
           parseFloat(item.low),
           parseFloat(item.close)
         ]);
-        console.log('Dados processados para o gráfico:', processedData);
+
         setCandlestickData(processedData);
-        setDinheiroDisponivel(data.dinheiro_em_caixa || 0);
+        setDinheiroDisponivel(dinheiro_em_caixa || 0);
+        setPrecoConvertido(preco_convertido);
+        setMoedaAtivo(moeda_ativo);
+        setMoedaCarteira(moeda_carteira);
+        setQuantidadeAtivo(quantidade_ativo);  // Atualiza a quantidade de ativos
       } else {
         console.error('Erro ao buscar dados da simulação:', data.error || 'Erro desconhecido');
       }
+
     } catch (error) {
       console.error('Erro ao buscar dados do gráfico de velas:', error);
     }
   };
 
-  const handleCompra = () => {
-    console.log(`Comprando com valor de R$ ${valor} de ${ticker}`);
+  const handleCompraVenda = async (tipoOperacao) => {
+    const valorNumerico = parseFloat(valor);
+  
+    // Verifica se o valor é maior que 0
+    if (!valorNumerico || valorNumerico <= 0) {
+      alert('Por favor, insira um valor válido.');
+      return;
+    }
+  
+    // Verifica se é uma compra e se há dinheiro suficiente
+    if (tipoOperacao === 'compra' && valorNumerico > dinheiroDisponivel) {
+      alert('Saldo insuficiente para compra.');
+      return;
+    }
+  
+    // Verifica se é uma venda e se há ativos suficientes na carteira
+    const valorVenda = valorNumerico / precoConvertido; // Calcula a quantidade de ativos a vender
+    if (tipoOperacao === 'venda' && valorVenda > quantidadeAtivo) {
+      alert('Você não possui ativos suficientes para venda.');
+      return;
+    }
+  
+    // Se tudo estiver correto, faz a requisição para o backend
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/buy_sell_actives/${simulacaoId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tipo: tipoOperacao,
+          valor: valorNumerico,
+          precoConvertido: precoConvertido,
+          ticker: ticker  // Envia o ticker que está sendo negociado
+        })
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        alert(`${tipoOperacao === 'compra' ? 'Compra' : 'Venda'} realizada com sucesso!`);
+        // Atualiza os valores após a transação
+        setDinheiroDisponivel(data.novoDinheiroDisponivel);
+        setQuantidadeAtivo(data.novaQuantidadeAtivo);  // Atualiza a quantidade de ativos na carteira
+      } else {
+        alert(`Erro ao realizar a ${tipoOperacao}. Tente novamente.`);
+      }
+    } catch (error) {
+      console.error('Erro ao realizar a transação:', error);
+      alert('Erro ao realizar a transação. Tente novamente.');
+    }
   };
-
-  const handleVenda = () => {
-    console.log(`Vendendo com valor de R$ ${valor} de ${ticker}`);
-  };
-
-  const options = {
+  
+  const options = useMemo(() => ({
     chart: {
       type: 'candlestick',
       height: '500px'
@@ -96,8 +151,11 @@ const NegociarAtivos = () => {
     },
     series: [{
       type: 'candlestick',
-      name: ticker,
+      name: ticker || 'Dados Padrão',
       data: candlestickData,
+      color: '#dc3545',
+      upColor: '#28a745',
+      lineColor: '#000000',
       tooltip: {
         valueDecimals: 2
       }
@@ -115,23 +173,30 @@ const NegociarAtivos = () => {
         chartOptions: { rangeSelector: { inputEnabled: false } }
       }]
     }
-  };
+  }), [candlestickData, ticker]);
 
   return (
     <div className="negociar-ativos-container">
       <div className="controles-container">
         <h3>{ticker}</h3>
-        <span>Dinheiro: R$ {dinheiroDisponivel.toFixed(2)}</span>
+        <span>Dinheiro: {moedaCarteira} {dinheiroDisponivel.toFixed(2)}</span>
+
         <input
           type="number"
-          placeholder="Valor"
+          placeholder="Valor na moeda base da carteira"
           value={valor}
           onChange={(e) => setValor(e.target.value)}
           className="input-valor"
         />
-        <button className="botao-compra" onClick={handleCompra}>Comprar</button>
-        <button className="botao-venda" onClick={handleVenda}>Vender</button>
+        {moedaAtivo !== moedaCarteira && (
+          <p>Preço convertido: {precoConvertido.toFixed(2)} {moedaCarteira}</p>
+        )}
+
+        <button className="botao-compra" onClick={() => handleCompraVenda('compra')}>Comprar</button>
+        <button className="botao-venda" onClick={() => handleCompraVenda('venda')}>Vender</button>
+
       </div>
+
       <div className="grafico-container">
         <HighchartsReact
           highcharts={Highcharts}
