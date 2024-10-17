@@ -113,3 +113,11 @@
 .performance-indicators {
   padding: 20px;
 }
+
+.titulo-simulacao {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}

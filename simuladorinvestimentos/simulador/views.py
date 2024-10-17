@@ -7,7 +7,6 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 
-
 from .services.nova_simulacao_automatica_services import criar_simulacao_automatica
 from .services.nova_simulacao_manual_services import criar_simulacao_manual
 from .services.pesquisar_ativos_services import pesquisar_ativo_por_ticker
@@ -193,7 +192,6 @@ def nova_simulacao_manual(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
 @login_required()
 @csrf_exempt
 def simulacao_manual(request, simulacao_id):
@@ -202,28 +200,73 @@ def simulacao_manual(request, simulacao_id):
             # Obtém a simulação pelo ID fornecido
             simulacao_manual = get_object_or_404(SimulacaoManual, id=simulacao_id)
 
+            # Extrai os ativos com posse maior que 0
+            ativos = simulacao_manual.carteira_manual.ativos.filter(posse__gt=0)
 
-            # Extrai os dados necessários da simulação e dos ativos
-            ativos = simulacao_manual.carteira_manual.ativos.all()
+            # Variáveis para armazenar os dados calculados
+            valor_total_ativos = 0
+            soma_ponderada_posses_precos = 0
+            pie_data = []
             line_data = {
-                'valorTotal': [ativo.peso for ativo in ativos],  # Exemplo de valores
-                'valorAtivos': [ativo.posse for ativo in ativos],  # Exemplo de valores
+                'valorTotal': [],
+                'valorAtivos': [],
             }
-            pie_data = [
-                {'name': ativo.nome, 'y': ativo.peso} for ativo in ativos
-            ]
-            cash = simulacao_manual.carteira_manual.valor_em_dinheiro
 
-            # Pega o mês e ano atuais da simulação
+            # Pega o mês atual da simulação
             mes_atual = simulacao_manual.mes_atual.strftime('%Y-%m-%d')  # Formata o mês
 
+            # Primeira iteração para calcular a soma ponderada das posses e preços
+            for ativo in ativos:
+                precos_armazenados = ativo.precos
 
-            # Resposta em formato JSON
+                # Verifica se há preços armazenados antes de acessar
+                if precos_armazenados:
+                    # Obtém o último preço armazenado no banco de dados
+                    ultimo_preco = list(precos_armazenados.values())[-1]
+                else:
+                    ultimo_preco = 0  # Se não houver preços, assume 0 para evitar erros
+
+                # Calcula o valor total do ativo (posse * preço)
+                valor_ativo = ativo.posse * ultimo_preco
+                valor_total_ativos += valor_ativo  # Soma o valor de todos os ativos
+
+                # Calcula a soma ponderada das posses e preços
+                soma_ponderada_posses_precos += ativo.posse * ultimo_preco
+
+                # Adiciona o valor de cada ativo para o gráfico de linha
+                line_data['valorAtivos'].append(ativo.posse)
+
+            # Segunda iteração para calcular os pesos para o gráfico de pizza
+            for ativo in ativos:
+                precos_armazenados = ativo.precos
+
+                # Verifica se há preços armazenados antes de acessar
+                if precos_armazenados:
+                    # Obtém o último preço armazenado no banco de dados
+                    ultimo_preco = list(precos_armazenados.values())[-1]
+                else:
+                    ultimo_preco = 0
+
+                # Cálculo do peso como a razão da posse multiplicada pelo preço sobre a soma ponderada total
+                peso_ativo = (ativo.posse * ultimo_preco) / soma_ponderada_posses_precos if soma_ponderada_posses_precos > 0 else 0
+                pie_data.append({
+                    'name': ativo.nome,
+                    'y': round(peso_ativo * 100, 2)  # Percentual para o gráfico de pizza
+                })
+
+            # Adiciona o valor total calculado para o gráfico de linha
+            line_data['valorTotal'].append(valor_total_ativos)
+
+            # Pega o valor em caixa da simulação
+            cash = simulacao_manual.carteira_manual.valor_em_dinheiro
+
+            # Resposta em formato JSON, incluindo o nome da simulação
             response_data = {
-                'lineData': line_data,
-                'pieData': pie_data,
-                'cash': cash,
-                'mes_atual': mes_atual,
+                'nome_simulacao': simulacao_manual.nome,  # Nome da simulação
+                'lineData': line_data,  # Dados para o gráfico de linha
+                'pieData': pie_data,  # Dados para o gráfico de pizza
+                'cash': cash,  # Dinheiro em caixa
+                'mes_atual': mes_atual,  # Mês e ano atuais da simulação
             }
 
             return JsonResponse(response_data, safe=False)
@@ -389,6 +432,9 @@ def negociar_ativos_pesquisa(request, simulacao_id):
 # Será feita a limpeza do terminal na refatoração views & services
 
 
+from datetime import datetime
+import pandas as pd
+
 @login_required
 @csrf_exempt
 def negociar_ativos(request, simulacao_id):
@@ -401,6 +447,12 @@ def negociar_ativos(request, simulacao_id):
             if not ticker:
                 return JsonResponse({'error': 'Ticker não fornecido.'}, status=400)
 
+            # Inicializa o objeto ativo no yfinance
+            ativo = yf.Ticker(ticker)
+
+            # Obtém a moeda do ativo (por exemplo, USD, BRL, etc.)
+            moeda_ativo = ativo.info.get('currency', 'USD')
+
             # Obtém a simulação manual associada ao ID e ao usuário autenticado
             simulacao = get_object_or_404(SimulacaoManual, id=simulacao_id, usuario=request.user)
             carteira_manual = simulacao.carteira_manual
@@ -412,66 +464,110 @@ def negociar_ativos(request, simulacao_id):
             if timezone.is_naive(mes_atual):
                 mes_atual = timezone.make_aware(mes_atual, timezone.get_default_timezone())
 
-            # Obter a data atual "aware"
-            data_atual = timezone.now()
-
-            # Garantir que 'mes_atual' não seja no futuro
-            if mes_atual > data_atual:
-                mes_atual = data_atual
-
             # Calcular a data de início (um ano antes de 'mes_atual')
             data_inicio = mes_atual - timedelta(days=365)
 
-            # Busca o histórico do ativo usando o yfinance
-            ativo = yf.Ticker(ticker)
-            historico = ativo.history(start=data_inicio, end=mes_atual)
+            # Verificar se o ativo está na carteira do usuário e obter a quantidade de posse
+            ativo_na_carteira = carteira_manual.ativos.filter(ticker=ticker).first()
 
-            if historico.empty:
-                return JsonResponse({'error': 'Não há dados históricos para o período especificado.'}, status=404)
+            # Se o ativo estiver na carteira, usa os preços armazenados
+            if ativo_na_carteira and ativo_na_carteira.precos:
+                # Usar os preços armazenados
+                precos_armazenados = ativo_na_carteira.precos
 
-            # Obtém o último preço de fechamento
-            ultimo_preco = historico['Close'].iloc[-1]
+                # Filtrar os preços dentro do intervalo de datas
+                historico_lista = [
+                    {
+                        'date': data,
+                        'open': preco['open'],
+                        'high': preco['high'],
+                        'low': preco['low'],
+                        'close': preco['close']
+                    }
+                    for data, preco in precos_armazenados.items()
+                    if data_inicio.date() <= datetime.strptime(data, '%Y-%m-%d').date() <= mes_atual.date()
+                ]
 
-            # Obtém a moeda do ativo (por exemplo, USD, BRL, etc.)
-            moeda_ativo = ativo.info.get('currency', 'USD')  # Default para USD se não disponível
-            moeda_carteira = carteira_manual.moeda_base  # Assumindo que a carteira tem o campo 'moeda'
+                # Ordenar o histórico por data
+                historico_lista.sort(key=lambda x: datetime.strptime(x['date'], '%Y-%m-%d'))
 
-            # Se a moeda do ativo for diferente da moeda da carteira, faça a conversão
+                # Ordenar as datas para obter o último preço
+                sorted_dates = sorted(precos_armazenados.keys(), key=lambda date: datetime.strptime(date, '%Y-%m-%d'))
+
+                # Obter o último preço de fechamento
+                ultimo_preco_data = sorted_dates[-1]  # Data mais recente
+                ultimo_preco_dict = precos_armazenados[ultimo_preco_data]  # Dicionário OHLC
+                ultimo_preco = float(ultimo_preco_dict['close'])  # Preço de fechamento
+
+            else:
+                # Se não houver preços armazenados, faça a requisição externa ao yfinance
+                historico = ativo.history(start=data_inicio, end=mes_atual)
+
+                if historico.empty:
+                    return JsonResponse({'error': 'Não há dados históricos para o período especificado.'}, status=404)
+
+                # Processa o histórico para o formato esperado pelo gráfico de velas
+                historico_lista = [
+                    {
+                        'date': str(index.date()),
+                        'open': row['Open'],
+                        'high': row['High'],
+                        'low': row['Low'],
+                        'close': row['Close']
+                    }
+                    for index, row in historico.iterrows()
+                ]
+
+                # Obtém o último preço de fechamento
+                ultimo_preco = float(historico['Close'].iloc[-1])
+
+            # Conversão de moeda
+            moeda_carteira = carteira_manual.moeda_base  # Moeda da carteira
+
+            # Se a moeda do ativo for diferente da moeda da carteira, faz a conversão
             if moeda_ativo != moeda_carteira:
-                # Usar o yfinance para obter a taxa de câmbio
+                # Obtém a taxa de câmbio com base no mes_atual
                 conversao_ticker = f"{moeda_ativo}{moeda_carteira}=X"  # Exemplo: 'USDBRL=X'
-                taxa_conversao = yf.Ticker(conversao_ticker).history(period='1d')['Close'].iloc[-1]
+                historico_conversao = yf.Ticker(conversao_ticker).history(start=data_inicio, end=mes_atual)
+
+                # Se não houver dados de conversão, usar taxa de 1:1 e informar o usuário
+                if historico_conversao.empty:
+                    taxa_conversao = 1  # Define taxa de conversão como 1:1
+                else:
+                    taxa_conversao = historico_conversao['Close'].iloc[-1]
+                    # Se taxa_conversao for uma Series ou dict, extrair o valor numérico
+                    if isinstance(taxa_conversao, pd.Series) or isinstance(taxa_conversao, dict):
+                        taxa_conversao = taxa_conversao.values[0]
+                    taxa_conversao = float(taxa_conversao)
+
+                # Imprimir tipo e valor de taxa_conversao
+                print(f"Tipo de taxa_conversao: {type(taxa_conversao)}, Valor: {taxa_conversao}")
 
                 # Converte o preço do ativo
                 ultimo_preco_convertido = ultimo_preco * taxa_conversao
             else:
                 ultimo_preco_convertido = ultimo_preco  # Já está na moeda correta
 
-            # Processa o histórico para o formato esperado pelo gráfico de velas
-            historico_lista = [
-                {
-                    'date': str(index.date()),
-                    'open': row['Open'],
-                    'high': row['High'],
-                    'low': row['Low'],
-                    'close': row['Close']
-                }
-                for index, row in historico.iterrows()
-            ]
+            # Calcula a posse do ativo se ele estiver na carteira
+            if ativo_na_carteira:
+                quantidade_ativo = ativo_na_carteira.posse  # Obtém a quantidade de posse do ativo
+                valor_posse = quantidade_ativo * ultimo_preco_convertido  # Calcula o valor da posse
+            else:
+                quantidade_ativo = 0
+                valor_posse = 0
 
-            # Aqui buscamos a quantidade de ativos do ticker na carteira
-            ativo_na_carteira = carteira_manual.ativos.filter(ticker=ticker).first()  # Substitua pelo campo correto
-            quantidade_ativo = ativo_na_carteira.posse if ativo_na_carteira else 0  # Verifica se o ativo está na carteira
-
-            # Prepara a resposta com o histórico de preços, valor em caixa e quantidade do ativo na carteira
+            # Prepara a resposta com o histórico de preços, valor em caixa, quantidade do ativo na carteira e nome da simulação
             response_data = {
                 'ticker': ticker,
                 'historico': historico_lista,
                 'dinheiro_em_caixa': carteira_manual.valor_em_dinheiro,
-                'preco_convertido': ultimo_preco_convertido,  # Preço convertido
+                'preco_convertido': ultimo_preco_convertido,
                 'moeda_ativo': moeda_ativo,
                 'moeda_carteira': moeda_carteira,
-                'quantidade_ativo': quantidade_ativo  # Quantidade do ativo na carteira
+                'quantidade_ativo': quantidade_ativo,
+                'valor_posse': valor_posse,  # Valor que o usuário possui do ativo
+                'ultimo_preco': ultimo_preco,  # Último preço do ativo
+                'nome_simulacao': simulacao.nome  # Nome da simulação
             }
 
             return JsonResponse(response_data, status=200)
@@ -518,6 +614,32 @@ def buy_sell_actives(request, simulacao_id):
             ativo_na_carteira = carteira_manual.ativos.filter(ticker=ticker).first()
             print(f"[DEBUG] Ativo na carteira: {ativo_na_carteira}")
 
+            # Caso o ativo não exista, vamos buscar e salvar os preços
+            if not ativo_na_carteira:
+                # Definir o período para baixar o histórico de preços
+                mes_atual = simulacao.mes_atual
+                data_inicio = mes_atual - timedelta(days=365)  # 1 ano antes do mês atual
+                data_fim = mes_atual
+
+                # Baixar o histórico de preços dos últimos 12 meses
+                print(f"[DEBUG] Baixando histórico de preços de {data_inicio} até {data_fim} para {ticker}")
+                historico_precos = yf.download(ticker, start=data_inicio, end=data_fim)
+
+                if historico_precos.empty:
+                    print(f"[ERROR] Não foi possível obter o histórico de preços para o ativo {ticker}.")
+                    return JsonResponse({'error': f'Não foi possível obter o histórico de preços para {ticker}.'}, status=404)
+
+                # Salva o histórico de preços com todos os valores OHLC
+                precos = {
+                    str(index.date()): {
+                        'open': float(row['Open']),
+                        'high': float(row['High']),
+                        'low': float(row['Low']),
+                        'close': float(row['Close'])
+                    }
+                    for index, row in historico_precos.iterrows()
+                }
+
             # Caso seja uma operação de compra
             if tipo_operacao == 'compra':
                 # Verifica se há dinheiro suficiente
@@ -545,7 +667,7 @@ def buy_sell_actives(request, simulacao_id):
                         nome=ticker,  # Aqui você pode ajustar para o nome real do ativo, se disponível
                         peso=0.0,  # Definir peso como 0 por enquanto ou outra lógica que faça sentido
                         posse=quantidade_comprada,
-                        precos={},  # Definir precos como vazio por enquanto
+                        precos=precos,  # Armazena o histórico de preços com OHLC
                         data_lancamento=None  # Pode ajustar conforme necessário
                     )
                     carteira_manual.ativos.add(novo_ativo)
@@ -609,4 +731,3 @@ def buy_sell_actives(request, simulacao_id):
 
     print("[ERROR] Método não permitido. Use POST.")
     return JsonResponse({'error': 'Método não permitido. Use POST.'}, status=405)
-

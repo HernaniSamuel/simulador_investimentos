@@ -15,6 +15,7 @@ const SimulacaoManual = () => {
   const [dataAtual, setDataAtual] = useState('');
   const [lineData, setLineData] = useState([]);
   const [pieData, setPieData] = useState([]);
+  const [nomeSimulacao, setNomeSimulacao] = useState('');  // Novo estado para armazenar o nome da simulação
 
   useEffect(() => {
     if (simulacaoId) {
@@ -34,6 +35,7 @@ const SimulacaoManual = () => {
         setDataAtual(data.mes_atual); // Assume que 'data.mes_atual' é uma string de data válida
         setLineData(data.lineData.valorTotal);
         setPieData(data.pieData);
+        setNomeSimulacao(data.nome_simulacao || '');  // Armazena o nome da simulação
       } else {
         alert(data.error || 'Erro ao buscar dados da simulação.');
       }
@@ -169,6 +171,9 @@ const SimulacaoManual = () => {
     <div className="dashboard">
       <div className="header-placeholder"></div>
 
+      {/* Adiciona o título com o nome da simulação */}
+      {nomeSimulacao && <h1 className="titulo-simulacao">{nomeSimulacao}</h1>}
+
       <div className="line-chart-section">
         <div className="controls">
           <div className="compact-controls">
@@ -189,15 +194,15 @@ const SimulacaoManual = () => {
               Ajustar poder de compra
             </label>
           </div>
-        <Link
-         className='link'
-          to={{
-            pathname: '/negociarativospesquisa',
-          }}
-          state={{ simulacaoId }} // Certifique-se de que simulacaoId tenha um valor válido aqui
-        >
-          Negociar Ativos
-        </Link>
+          <Link
+            className='link'
+            to={{
+              pathname: '/negociarativospesquisa',
+            }}
+            state={{ simulacaoId }} // Certifique-se de que simulacaoId tenha um valor válido aqui
+          >
+            Negociar Ativos
+          </Link>
           <span>{dataAtual ? formatarData(dataAtual) : ''}</span>
           <button onClick={handleAvancarMes}>Próximo Mês</button>
         </div>

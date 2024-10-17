@@ -102,3 +102,40 @@
   outline: none;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
 }
+
+.toast-mensagem {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 1000;
+  opacity: 0.9;
+  animation: fadein 0.5s, fadeout 0.5s 4.5s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 0.9; }
+}
+
+@keyframes fadeout {
+  from { opacity: 0.9; }
+  to { opacity: 0; }
+}
+
+.simulacao-nome-link {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.simulacao-nome-link:hover {
+  text-decoration: underline;
+}
