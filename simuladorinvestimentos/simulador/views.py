@@ -192,6 +192,7 @@ def nova_simulacao_manual(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+
 @login_required()
 @csrf_exempt
 def simulacao_manual(request, simulacao_id):
@@ -222,7 +223,8 @@ def simulacao_manual(request, simulacao_id):
                 # Verifica se há preços armazenados antes de acessar
                 if precos_armazenados:
                     # Obtém o último preço armazenado no banco de dados
-                    ultimo_preco = list(precos_armazenados.values())[-1]
+                    ultimo_preco_data = list(precos_armazenados.values())[-1]
+                    ultimo_preco = ultimo_preco_data.get('close', 0)
                 else:
                     ultimo_preco = 0  # Se não houver preços, assume 0 para evitar erros
 
@@ -231,7 +233,7 @@ def simulacao_manual(request, simulacao_id):
                 valor_total_ativos += valor_ativo  # Soma o valor de todos os ativos
 
                 # Calcula a soma ponderada das posses e preços
-                soma_ponderada_posses_precos += ativo.posse * ultimo_preco
+                soma_ponderada_posses_precos += valor_ativo
 
                 # Adiciona o valor de cada ativo para o gráfico de linha
                 line_data['valorAtivos'].append(ativo.posse)
@@ -243,7 +245,8 @@ def simulacao_manual(request, simulacao_id):
                 # Verifica se há preços armazenados antes de acessar
                 if precos_armazenados:
                     # Obtém o último preço armazenado no banco de dados
-                    ultimo_preco = list(precos_armazenados.values())[-1]
+                    ultimo_preco_data = list(precos_armazenados.values())[-1]
+                    ultimo_preco = ultimo_preco_data.get('close', 0)
                 else:
                     ultimo_preco = 0
 
@@ -431,9 +434,6 @@ def negociar_ativos_pesquisa(request, simulacao_id):
 
 # Será feita a limpeza do terminal na refatoração views & services
 
-
-from datetime import datetime
-import pandas as pd
 
 @login_required
 @csrf_exempt
@@ -731,3 +731,4 @@ def buy_sell_actives(request, simulacao_id):
 
     print("[ERROR] Método não permitido. Use POST.")
     return JsonResponse({'error': 'Método não permitido. Use POST.'}, status=405)
+

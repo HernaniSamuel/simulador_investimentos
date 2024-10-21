@@ -2,7 +2,7 @@ import json
 import pandas as pd
 from datetime import datetime
 from ..models import SimulacaoAutomatica
-from ..utils import ajustar_inflacao, arredondar_para_baixo
+from ..utils import ajustar_inflacao_automatica, arredondar_para_baixo
 
 
 def safe_strptime(date_str, format='%Y-%m-%d'):
@@ -20,7 +20,7 @@ def get_ipca_data(simulacao):
 
 
 def adjust_initial_application(simulacao, ipca_data, data_inicial, data_final):
-    return ajustar_inflacao(
+    return ajustar_inflacao_automatica(
         periodo_inicial=data_inicial,
         ipca_data=ipca_data,
         coluna_ipca='Valor',
@@ -35,7 +35,7 @@ def adjust_monthly_applications(simulacao, ipca_data, data_inicial, data_final):
         (ipca_data.index >= data_inicial) & (ipca_data.index <= data_final)].index
 
     for data_corrente in datas_validas:
-        aplicacao_mensal_ajustada = ajustar_inflacao(
+        aplicacao_mensal_ajustada = ajustar_inflacao_automatica(
             periodo_inicial=data_corrente,
             ipca_data=ipca_data,
             coluna_ipca='Valor',
