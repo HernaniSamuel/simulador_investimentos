@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 
@@ -16,6 +16,8 @@ const SimulacaoManual = () => {
   const [lineData, setLineData] = useState([]);
   const [pieData, setPieData] = useState([]);
   const [nomeSimulacao, setNomeSimulacao] = useState('');  // Novo estado para armazenar o nome da simulação
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (simulacaoId) {
@@ -234,7 +236,11 @@ const SimulacaoManual = () => {
                     <td>{ativo.name}</td>
                     <td>{ativo.y}x</td>
                     <td>
-                      <button>Negociar</button>
+                      <button
+                        onClick={() => navigate(`/negociarativos`, { state: { simulacaoId, ticker: ativo.name } })}
+                      >
+                        Negociar
+                      </button>
                     </td>
                   </tr>
                 ))}
