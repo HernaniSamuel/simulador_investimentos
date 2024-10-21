@@ -39,7 +39,6 @@ class SimulacaoAutomatica(models.Model):
     aplicacao_mensal = models.FloatField()
     carteira_automatica = models.OneToOneField(CarteiraAutomatica, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # Para relacionar a simulação ao usuário
-    tipo = models.CharField(max_length=10)
     inflacao_total = models.JSONField(default=dict)
     resultados = models.JSONField(default=dict)
 
@@ -60,12 +59,12 @@ class CarteiraManual(models.Model):
 
 class SimulacaoManual(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # Para relacionar a simulação ao usuário
-    tipo = models.CharField(max_length=10)
     nome = models.CharField(max_length=100)
     data_inicial = models.DateField()
     mes_atual = models.DateTimeField()
     carteira_manual = models.OneToOneField(CarteiraManual, on_delete=models.CASCADE)
     inflacao_total = models.JSONField(default=dict)
+    historico_valor_total = models.JSONField(default=list)
 
 
 class Historico(models.Model):

@@ -31,13 +31,13 @@ const SimulacaoManual = () => {
         `http://127.0.0.1:8000/api/simulacao_manual/${simulacaoId}/`
       );
       const data = await response.json();
-
+  
       if (response.ok) {
         setDinheiroEmCaixa(data.cash);
-        setDataAtual(data.mes_atual); // Assume que 'data.mes_atual' é uma string de data válida
-        setLineData(data.lineData.valorTotal);
+        setDataAtual(data.mes_atual);
+        setLineData(data.lineData.valorTotal || []);
         setPieData(data.pieData);
-        setNomeSimulacao(data.nome_simulacao || '');  // Armazena o nome da simulação
+        setNomeSimulacao(data.nome_simulacao || '');
       } else {
         alert(data.error || 'Erro ao buscar dados da simulação.');
       }
@@ -97,7 +97,7 @@ const SimulacaoManual = () => {
       alert('ID da simulação não encontrado.');
       return;
     }
-
+  
     try {
       const response = await fetch(
         `http://127.0.0.1:8000/api/avancar_mes/${simulacaoId}/`,
@@ -108,11 +108,12 @@ const SimulacaoManual = () => {
           },
         }
       );
-
+  
       const data = await response.json();
-
+  
       if (response.ok && data.mes_atual) {
-        setDataAtual(data.mes_atual); // Atualiza a data com o valor retornado pela API
+        setDataAtual(data.mes_atual);
+        await fetchSimulacaoData(); // Fetch updated data
       } else if (data.error) {
         alert(data.error);
       } else if (data.message) {
@@ -123,6 +124,7 @@ const SimulacaoManual = () => {
       alert('Ocorreu um erro ao avançar o mês. Tente novamente.');
     }
   };
+  
 
   const formatarData = (dataString) => {
     const partes = dataString.split('-');
@@ -142,7 +144,7 @@ const SimulacaoManual = () => {
       text: 'Valor Total da Carteira',
     },
     xAxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      categories: lineData.map((_, index) => `Mês ${index + 1}`),
     },
     series: [
       {
