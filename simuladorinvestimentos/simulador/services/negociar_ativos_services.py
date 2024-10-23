@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from ..models import SimulacaoManual
+from ..utils import arredondar_para_baixo
 
 
 def negociar_ativo(simulacao_id, user, ticker):
@@ -90,12 +91,14 @@ def negociar_ativo(simulacao_id, user, ticker):
 
             taxa_conversao = float(historico_conversao['Close'].iloc[-1]) if not historico_conversao.empty else 1
             ultimo_preco_convertido = ultimo_preco * taxa_conversao
+            ultimo_preco_convertido = arredondar_para_baixo(ultimo_preco_convertido)
         else:
-            ultimo_preco_convertido = ultimo_preco
+            ultimo_preco_convertido = arredondar_para_baixo(ultimo_preco)
 
         # Calcula a posse do ativo
         quantidade_ativo = ativo_na_carteira.posse if ativo_na_carteira else 0
         valor_posse = quantidade_ativo * ultimo_preco_convertido if quantidade_ativo > 0 else 0
+        valor_posse = arredondar_para_baixo(valor_posse)
 
         response_data = {
             'ticker': ticker,

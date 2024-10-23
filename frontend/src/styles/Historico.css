@@ -55,7 +55,7 @@
   text-decoration: underline;
 }
 
-.simulacao-card button {
+.button-delete {
   margin-top: 10px;
   padding: 8px 12px;
   background-color: #dc3545;
@@ -65,6 +65,6 @@
   cursor: pointer;
 }
 
-.simulacao-card button:hover {
+.button-delete:hover {
   background-color: #c82333;
 }

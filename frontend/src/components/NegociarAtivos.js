@@ -217,12 +217,13 @@ const NegociarAtivos = () => {
         {moedaAtivo !== moedaCarteira ? (
           <>
             <p>Preço convertido: {(precoConvertido || 0).toFixed(2)} {moedaCarteira}</p>
-            <p>Valor em posse: {(valorPosse || 0).toFixed(2)} {moedaCarteira}</p>
+            
           </>
         ) : (
           <p>Último preço: {(ultimoPreco || 0).toFixed(2)} {moedaAtivo}</p>
         )}
-
+        
+        <p>Valor em posse: {(valorPosse || 0).toFixed(2)} {moedaCarteira}</p>
         <button className="botao-compra" onClick={() => handleCompraVenda('compra')}>Comprar</button>
         <button className="botao-venda" onClick={() => handleCompraVenda('venda')}>Vender</button>
       </div>

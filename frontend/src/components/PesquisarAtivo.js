@@ -47,7 +47,7 @@ const PesquisarAtivo = ({ adicionarAtivo }) => {
           <input
             type="text"
             value={ticker}
-            onChange={(e) => setTicker(e.target.value)}
+            onChange={(e) => setTicker(e.target.value.toUpperCase())}  // Converte para maiúsculas
             placeholder="Ticker do ativo de acordo com o Yahoo Finance"
             className="pesquisar-ativo-input"
             required

@@ -3,6 +3,7 @@ import pandas as pd
 from ..models import SimulacaoManual
 from ..utils import arredondar_para_baixo, ajustar_inflacao
 
+
 def modificar_dinheiro(simulacao_id, user, valor, ajustar_inflacao_flag):
     try:
         # Obtém a simulação correspondente
@@ -48,7 +49,7 @@ def modificar_dinheiro(simulacao_id, user, valor, ajustar_inflacao_flag):
         if novo_valor < 0:
             novo_valor = 0
 
-        carteira.valor_em_dinheiro = novo_valor
+        carteira.valor_em_dinheiro = arredondar_para_baixo(novo_valor)
         carteira.save()
 
         return {'message': 'Valor atualizado com sucesso.', 'novo_valor': novo_valor}, 200

@@ -8,23 +8,17 @@ class Ativo(models.Model):
     peso = models.FloatField()
     posse = models.FloatField()
     precos = models.JSONField(default=dict)
-    data_lancamento = models.DateField(null=True, blank=True)  # Adicionando a data de lançamento do ativo
+    ultimo_preco_convertido = models.FloatField()
+    data_lancamento = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.nome
-
-
-class Indicador(models.Model):
-    ticker = models.CharField(max_length=10)
-    nome = models.CharField(max_length=100)
-    indices = models.JSONField(default=dict)
 
 
 class CarteiraAutomatica(models.Model):
     ativos = models.ManyToManyField(Ativo)
     valor_em_dinheiro = models.FloatField()
     valor_ativos = models.FloatField()
-    indicadores = models.ManyToManyField(Indicador)
     moeda_base = models.CharField(max_length=10)
 
     def __str__(self):
@@ -50,7 +44,6 @@ class CarteiraManual(models.Model):
     ativos = models.ManyToManyField(Ativo)
     valor_em_dinheiro = models.FloatField()
     valor_ativos = models.FloatField()
-    indicadores = models.ManyToManyField(Indicador)
     moeda_base = models.CharField(max_length=10)
 
     def __str__(self):

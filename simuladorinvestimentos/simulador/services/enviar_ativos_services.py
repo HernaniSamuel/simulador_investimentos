@@ -86,6 +86,7 @@ def enviar_ativos_para_carteira(data):
             posse=0,
             nome=nome,
             precos=json.dumps(precos),
+            ultimo_preco_convertido=0.00, # Não usado pela simulação automática
             data_lancamento=data_lancamento  # Salvando a data de lançamento do ativo
         )
         carteira_automatica.ativos.add(ativo)

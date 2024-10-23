@@ -5,14 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/avancar_mes_services.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/buy_sell_actives_services.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/modificar_dinheiro_services.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_pesquisa_services.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_services.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/simulacao_manual_services.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Historico.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Historico.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/NegociarAtivos.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NegociarAtivos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/NegociarAtivosPesquisa.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NegociarAtivosPesquisa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/PesquisarAtivo.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/PesquisarAtivo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles/Historico.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/Historico.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/avancar_mes_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/avancar_mes_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/buy_sell_actives_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/buy_sell_actives_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/enviar_ativos_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/enviar_ativos_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/modificar_dinheiro_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/modificar_dinheiro_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/simulacao_manual_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/simulacao_manual_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/tests.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

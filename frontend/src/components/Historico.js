@@ -136,7 +136,7 @@ const Historico = () => {
                       Abrir Simulação
                     </button>
 
-                    <button onClick={() => handleDeleteManual(simulacao.simulacao_id)}>Excluir</button>
+                    <button onClick={() => handleDeleteManual(simulacao.simulacao_id)} className='button-delete'>Excluir</button>
                   </div>
                 ))}
               </div>

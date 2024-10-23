@@ -228,7 +228,7 @@ const SimulacaoManual = () => {
               <thead>
                 <tr>
                   <th>Ticker</th>
-                  <th>Posse</th>
+                  <th>Peso</th>
                   <th>Link</th>
                 </tr>
               </thead>
@@ -236,7 +236,7 @@ const SimulacaoManual = () => {
                 {pieData.map((ativo, index) => (
                   <tr key={index}>
                     <td>{ativo.name}</td>
-                    <td>{ativo.y}x</td>
+                    <td>{ativo.y}%</td>
                     <td>
                       <button
                         onClick={() => navigate(`/negociarativos`, { state: { simulacaoId, ticker: ativo.name } })}
@@ -249,10 +249,6 @@ const SimulacaoManual = () => {
               </tbody>
             </table>
           </div>
-        </div>
-        <div className="performance-indicators">
-          <h3>Indicadores de Performance</h3>
-          <p>Você pode colocar informações adicionais de performance aqui.</p>
         </div>
       </div>
     </div>
