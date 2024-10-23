@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/migrations/0013_remove_simulacaoautomatica_tipo_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/avancar_mes_services.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/buy_sell_actives_services.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/modificar_dinheiro_services.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_pesquisa_services.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_services.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/simulacao_manual_services.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
