@@ -5,6 +5,7 @@ import json
 from ..models import SimulacaoManual
 from ..utils import arredondar_para_baixo
 
+
 def avancar_mes(simulacao_id, user):
     try:
         print(f"Iniciando o avanço do mês para a simulação ID: {simulacao_id}, usuário: {user}")
@@ -40,6 +41,49 @@ def avancar_mes(simulacao_id, user):
                     auto_adjust=False
                 )
 
+                # Processar dividendos
+                dividends = yf_data.dividends
+                if not dividends.empty:
+                    # Filtrar dividendos no intervalo do mês atual
+                    filtered_dividends = dividends[(dividends.index >= inicio_mes) & (dividends.index < fim_mes)]
+                    if not filtered_dividends.empty:
+                        dividend_value = filtered_dividends.sum() * ativo.posse
+                        print(f"Dividendos recebidos para {ativo.ticker}: {dividend_value}")
+
+                        # Converter dividendos se necessário
+                        if moeda_base_ativo and moeda_base_ativo != moeda_base_carteira:
+                            print(
+                                f"Moeda do ativo {moeda_base_ativo} é diferente da moeda da carteira {moeda_base_carteira}. Obtendo taxa de conversão para dividendos.")
+                            par_moedas = f"{moeda_base_ativo}{moeda_base_carteira}=X"
+                            conversao_moeda = yf.Ticker(par_moedas)
+                            historico_conversao = conversao_moeda.history(
+                                start=inicio_mes,
+                                end=fim_mes,
+                                interval="1d"
+                            )
+
+                            if not historico_conversao.empty:
+                                taxa_conversao = historico_conversao['Close'].iloc[
+                                    -1]  # Usa a taxa de conversão mais recente
+                                dividend_value_convertido = dividend_value * taxa_conversao
+                                print(
+                                    f"Taxa de conversão para {par_moedas}: {taxa_conversao}. Dividendos convertidos: {dividend_value_convertido}")
+                            else:
+                                print(
+                                    f"Taxa de conversão não encontrada para {moeda_base_ativo}. Usando o valor original do dividendo.")
+                                dividend_value_convertido = dividend_value
+                        else:
+                            dividend_value_convertido = dividend_value
+                            print(
+                                f"Moeda do ativo e da carteira são iguais. Valor dos dividendos não necessita de conversão: {dividend_value_convertido}")
+
+                        # Somar dividendos ao valor em dinheiro da carteira
+                        carteira_manual.valor_em_dinheiro += arredondar_para_baixo(dividend_value_convertido)
+                        print(
+                            f"Dividendos somados ao valor da carteira. Novo valor em dinheiro: {carteira_manual.valor_em_dinheiro}")
+                        carteira_manual.save()
+
+                # Processar preços
                 if not historico_precos.empty:
                     print(f"Histórico de preços obtido para {ativo.ticker}")
                     precos = ativo.precos if ativo.precos else {}
@@ -59,10 +103,12 @@ def avancar_mes(simulacao_id, user):
                     preco_mes_atual = historico_precos['Close'].iloc[-1]  # Usa o último preço de fechamento disponível
                 else:
                     preco_mes_atual = ativo.ultimo_preco_convertido or 0
-                    print(f"Preços não encontrados para {ativo.ticker} no mês {mes_atual.strftime('%Y-%m')}. Usando último preço conhecido: {preco_mes_atual}")
+                    print(
+                        f"Preços não encontrados para {ativo.ticker} no mês {mes_atual.strftime('%Y-%m')}. Usando último preço conhecido: {preco_mes_atual}")
 
                 if moeda_base_ativo and moeda_base_ativo != moeda_base_carteira:
-                    print(f"Moeda do ativo {moeda_base_ativo} é diferente da moeda da carteira {moeda_base_carteira}. Obtendo taxa de conversão.")
+                    print(
+                        f"Moeda do ativo {moeda_base_ativo} é diferente da moeda da carteira {moeda_base_carteira}. Obtendo taxa de conversão.")
                     par_moedas = f"{moeda_base_ativo}{moeda_base_carteira}=X"
                     conversao_moeda = yf.Ticker(par_moedas)
                     historico_conversao = conversao_moeda.history(
@@ -74,13 +120,16 @@ def avancar_mes(simulacao_id, user):
                     if not historico_conversao.empty:
                         taxa_conversao = historico_conversao['Close'].iloc[-1]  # Usa a taxa de conversão mais recente
                         preco_mes_atual_convertido = preco_mes_atual * taxa_conversao
-                        print(f"Taxa de conversão para {par_moedas}: {taxa_conversao}. Preço convertido: {preco_mes_atual_convertido}")
+                        print(
+                            f"Taxa de conversão para {par_moedas}: {taxa_conversao}. Preço convertido: {preco_mes_atual_convertido}")
                     else:
-                        print(f"Taxa de conversão não encontrada para {moeda_base_ativo} para {moeda_base_carteira} no mês {mes_atual.strftime('%Y-%m')}. Usando o preço sem conversão.")
+                        print(
+                            f"Taxa de conversão não encontrada para {moeda_base_ativo}. Usando o preço sem conversão.")
                         preco_mes_atual_convertido = preco_mes_atual
                 else:
                     preco_mes_atual_convertido = preco_mes_atual
-                    print(f"Moeda do ativo e da carteira são iguais. Preço não necessita de conversão: {preco_mes_atual_convertido}")
+                    print(
+                        f"Moeda do ativo e da carteira são iguais. Preço não necessita de conversão: {preco_mes_atual_convertido}")
 
                 preco_mes_atual_convertido = arredondar_para_baixo(preco_mes_atual_convertido)
                 print(f"Preço convertido após arredondamento: {preco_mes_atual_convertido}")

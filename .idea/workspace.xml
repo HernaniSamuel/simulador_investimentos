@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
+      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/avancar_mes_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/avancar_mes_services.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/buy_sell_actives_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/buy_sell_actives_services.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/negociar_ativos_services.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/simulacao_manual_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/simulacao_manual_services.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,27 +39,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Python.batata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.fodase.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.manage.executor&quot;: &quot;Run&quot;,
-    &quot;Python.printstructure.executor&quot;: &quot;Run&quot;,
-    &quot;Python.teste_yf.executor&quot;: &quot;Run&quot;,
-    &quot;Python.utils (1).executor&quot;: &quot;Debug&quot;,
-    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
-    &quot;Python.vaitomarnocu.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/hdini/PycharmProjects/binanceRobot&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Python.batata.executor": "Run",
+    "Python.dividendo.executor": "Run",
+    "Python.fodase.executor": "Run",
+    "Python.main (1).executor": "Run",
+    "Python.manage.executor": "Run",
+    "Python.printstructure.executor": "Run",
+    "Python.teste_yf.executor": "Run",
+    "Python.utils (1).executor": "Debug",
+    "Python.utils.executor": "Run",
+    "Python.vaitomarnocu.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/hdini/PycharmProjects/binanceRobot",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\hdini\PycharmProjects\simulador_investimentos\templates" />
@@ -72,8 +71,8 @@
       <recent name="C:\Users\hdini\PycharmProjects\simulador_investimentos\simuladorinvestimentos" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.teste_yf">
-    <configuration name="batata" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.dividendo">
+    <configuration name="dividendo" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="simulador_investimentos" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -82,11 +81,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/simuladorinvestimentos" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/simuladorinvestimentos/simulador/services" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/simuladorinvestimentos/batata.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/simuladorinvestimentos/simulador/services/dividendo.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -207,11 +206,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.dividendo" />
         <item itemvalue="Python.teste_yf" />
         <item itemvalue="Python.utils (1)" />
         <item itemvalue="Python.utils" />
         <item itemvalue="Python.printstructure" />
-        <item itemvalue="Python.batata" />
       </list>
     </recent_temporary>
   </component>
