@@ -4,20 +4,25 @@ import '../styles/NovaSimulacaoAutomatica.css';
 
 const NovaSimulacaoAutomatica = () => {
   const [nome, setNome] = useState('');
-  const [dataInicial, setDataInicial] = useState('');
-  const [dataFinal, setDataFinal] = useState('');
+  const [anoInicial, setAnoInicial] = useState('');
+  const [mesInicial, setMesInicial] = useState('');
+  const [anoFinal, setAnoFinal] = useState('');
+  const [mesFinal, setMesFinal] = useState('');
   const [aplicacaoInicial, setAplicacaoInicial] = useState('');
   const [aplicacaoMensal, setAplicacaoMensal] = useState('');
-  const [moedaBase, setMoedaBase] = useState('BRL'); // Default to BRL
+  const [moedaBase, setMoedaBase] = useState('BRL'); 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const navigate = useNavigate(); // Hook para navegar entre as páginas
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Verificação de incoerências
+    // Monta as datas usando o dia 01
+    const dataInicial = `${anoInicial}-${mesInicial}-01`;
+    const dataFinal = `${anoFinal}-${mesFinal}-01`;
+
     if (new Date(dataFinal) < new Date(dataInicial)) {
       setError('A data final não pode ser anterior à data inicial.');
       return;
@@ -46,7 +51,6 @@ const NovaSimulacaoAutomatica = () => {
     if (response.ok) {
       setMessage(data.message);
       setError('');
-      // Passar os IDs da simulação e carteira como parte do estado de navegação
       navigate('/selecionarativosautomatica', { state: { simulacaoId: data.simulacao_id, carteiraId: data.carteira_id } });
     } else {
       setMessage('');
@@ -82,25 +86,62 @@ const NovaSimulacaoAutomatica = () => {
             required
           />
         </div>
+
+        {/* Seleção de Mês e Ano para Data Inicial */}
         <div className="form-group">
           <label>Data Inicial:</label>
+          <select value={mesInicial} onChange={(e) => setMesInicial(e.target.value)} required>
+            <option value="">Mês</option>
+            <option value="01">Janeiro</option>
+            <option value="02">Fevereiro</option>
+            <option value="03">Março</option>
+            <option value="04">Abril</option>
+            <option value="05">Maio</option>
+            <option value="06">Junho</option>
+            <option value="07">Julho</option>
+            <option value="08">Agosto</option>
+            <option value="09">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+          </select>
           <input
-            type="date"
-            value={dataInicial}
-            onChange={(e) => setDataInicial(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Data Final:</label>
-          <input
-            type="date"
-            value={dataFinal}
-            onChange={(e) => setDataFinal(e.target.value)}
+            type="number"
+            value={anoInicial}
+            onChange={(e) => setAnoInicial(e.target.value)}
+            placeholder="Ano"
             required
           />
         </div>
 
+        {/* Seleção de Mês e Ano para Data Final */}
+        <div className="form-group">
+          <label>Data Final:</label>
+          <select value={mesFinal} onChange={(e) => setMesFinal(e.target.value)} required>
+            <option value="">Mês</option>
+            <option value="01">Janeiro</option>
+            <option value="02">Fevereiro</option>
+            <option value="03">Março</option>
+            <option value="04">Abril</option>
+            <option value="05">Maio</option>
+            <option value="06">Junho</option>
+            <option value="07">Julho</option>
+            <option value="08">Agosto</option>
+            <option value="09">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+          </select>
+          <input
+            type="number"
+            value={anoFinal}
+            onChange={(e) => setAnoFinal(e.target.value)}
+            placeholder="Ano"
+            required
+          />
+        </div>
+
+        {/* Outros campos continuam iguais */}
         <div className="form-group">
           <label>Aplicação Inicial:</label>
           <input
@@ -131,7 +172,6 @@ const NovaSimulacaoAutomatica = () => {
             required
           >
             <option value="BRL">BRL - Real Brasileiro</option>
-            {/* Adicione outras moedas aqui conforme necessário */}
           </select>
         </div>
         <button type="submit" className="submit-button">Criar Simulação</button>

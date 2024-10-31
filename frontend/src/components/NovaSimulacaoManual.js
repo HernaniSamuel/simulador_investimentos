@@ -4,15 +4,19 @@ import '../styles/NovaSimulacaoManual.css';
 
 const NovaSimulacaoManual = () => {
   const [nome, setNome] = useState('');
-  const [dataInicial, setDataInicial] = useState('');
-  const [moedaBase, setMoedaBase] = useState('BRL'); // Default to BRL
+  const [anoInicial, setAnoInicial] = useState('');
+  const [mesInicial, setMesInicial] = useState('');
+  const [moedaBase, setMoedaBase] = useState('BRL'); 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const navigate = useNavigate(); // Hook para navegar entre as páginas
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Monta a data inicial usando o dia 01
+    const dataInicial = `${anoInicial}-${mesInicial}-01`;
 
     const csrfToken = getCookie('csrftoken');
 
@@ -34,7 +38,6 @@ const NovaSimulacaoManual = () => {
     if (response.ok) {
       setMessage(data.message);
       setError('');
-      // Passar os IDs da simulação e carteira como parte do estado de navegação
       navigate('/simulacaomanual', { state: { simulacaoId: data.simulacao_id, carteiraId: data.carteira_id } });
     } else {
       setMessage('');
@@ -70,15 +73,34 @@ const NovaSimulacaoManual = () => {
             required
           />
         </div>
+
+        {/* Seleção de Mês e Ano para Data Inicial */}
         <div className="form-group">
           <label>Data Inicial:</label>
+          <select value={mesInicial} onChange={(e) => setMesInicial(e.target.value)} required>
+            <option value="">Mês</option>
+            <option value="01">Janeiro</option>
+            <option value="02">Fevereiro</option>
+            <option value="03">Março</option>
+            <option value="04">Abril</option>
+            <option value="05">Maio</option>
+            <option value="06">Junho</option>
+            <option value="07">Julho</option>
+            <option value="08">Agosto</option>
+            <option value="09">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+          </select>
           <input
-            type="date"
-            value={dataInicial}
-            onChange={(e) => setDataInicial(e.target.value)}
+            type="number"
+            value={anoInicial}
+            onChange={(e) => setAnoInicial(e.target.value)}
+            placeholder="Ano"
             required
           />
         </div>
+
         <div className="form-group">
           <label>Moeda Base:</label>
           <select
@@ -87,7 +109,6 @@ const NovaSimulacaoManual = () => {
             required
           >
             <option value="BRL">BRL - Real Brasileiro</option>
-            {/* Adicione outras moedas aqui conforme necessário */}
           </select>
         </div>
         <button type="submit" className="submit-button">Criar Simulação</button>
