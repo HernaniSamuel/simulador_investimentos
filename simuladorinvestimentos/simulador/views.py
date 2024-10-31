@@ -319,3 +319,4 @@ def buy_sell_actives(request, simulacao_id):
 
     else:
         return JsonResponse({'error': 'Método não permitido. Use POST.'}, status=405)
+

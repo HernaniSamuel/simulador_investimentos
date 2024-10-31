@@ -188,7 +188,6 @@ const SimulacaoManual = () => {
               value={valor}
               onChange={handleValorChange}
             />
-            <button onClick={handleAdicionarDinheiro}>Adicionar mais dinheiro</button>
             <label>
               <input
                 type="checkbox"
@@ -197,6 +196,7 @@ const SimulacaoManual = () => {
               />
               Ajustar poder de compra
             </label>
+            <button onClick={handleAdicionarDinheiro}>Adicionar mais dinheiro</button>
           </div>
           <Link
             className='link'

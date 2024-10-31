@@ -139,3 +139,40 @@
 .simulacao-nome-link:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 1024px) {
+  .negociar-ativos-container {
+    padding: 10px; /* Reduz o padding em telas menores */
+  }
+
+  .grafico-container {
+    width: 100%; /* Usa a largura total disponível */
+    max-height: 300px; /* Ajusta a altura máxima para telas menores */
+    height: auto; /* Permite que a altura se ajuste automaticamente */
+    overflow: auto; /* Habilita o scroll caso o conteúdo ultrapasse a área */
+    margin-bottom: 20px; /* Espaço extra abaixo do gráfico */
+  }
+
+  .controles-container {
+    flex-direction: column; /* Empilha os controles verticalmente */
+    align-items: center;
+    gap: 10px;
+  }
+
+  .input-valor {
+    width: 100%; /* Ajusta a largura para ocupar toda a tela */
+    max-width: none;
+  }
+
+  .botao-compra,
+  .botao-venda {
+    width: 100%; /* Botões ocupam a largura total */
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .grafico-container {
+    max-height: 250px; /* Reduz ainda mais a altura para telas muito pequenas */
+  }
+}

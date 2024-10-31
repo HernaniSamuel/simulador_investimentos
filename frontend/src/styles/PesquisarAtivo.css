@@ -62,3 +62,24 @@
     text-align: center;
   }
   
+  @media (max-width: 1024px) and (orientation: landscape) {
+    .pesquisar-ativo-container {
+      padding: 30px; /* Aumenta o padding para mais conforto */
+    }
+  
+    .pesquisar-ativo-form {
+      min-width: auto; /* Ajusta a largura para se adaptar melhor em telas pequenas */
+      width: 100%; /* Garante que ocupe a largura total disponível */
+      gap: 15px;
+    }
+  
+    .pesquisar-ativo-input {
+      padding: 15px; /* Aumenta o padding do input para maior área de toque */
+      font-size: 18px; /* Tamanho da fonte levemente maior para leitura */
+    }
+  
+    .pesquisar-ativo-button {
+      padding: 15px; /* Aumenta o padding do botão para maior conforto */
+    }
+  }
+  

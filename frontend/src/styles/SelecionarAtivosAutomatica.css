@@ -63,4 +63,56 @@
     cursor: pointer;
     margin-top: 20px;
   }
+
+  /* Media query para telas pequenas em modo paisagem */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .selecionar-ativos-automatica-container {
+    width: 100%;
+    padding:1em;
+  }
   
+  .top-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .grafico-setores {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+  
+  .lista-ativos {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .ativo-item {
+    flex-direction: column; /* Organiza cada item em uma coluna para economizar espaço */
+    align-items: center;
+  }
+
+  .peso {
+    width: 100%;
+    justify-content: space-around;
+    flex-direction: row;
+    margin-top: 10px;
+  }
+
+  .peso input[type="number"] {
+    width: 60px; /* Mantém o campo numérico compacto */
+    text-align: center;
+  }
+
+  .peso input[type="range"] {
+    width: 80%; /* Ajusta a barra de rolagem para a largura do container */
+    margin: 5px 0;
+  }
+
+  .remover-button, .enviar-button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px; /* Facilita o toque */
+  }
+
+}

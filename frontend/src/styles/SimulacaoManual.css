@@ -121,3 +121,74 @@
   text-align: center;
   color: #333;
 }
+
+@media (max-width: 1024px) {
+  .dashboard {
+    padding: 10px; /* Reduz o padding para telas menores */
+  }
+
+  .line-chart-section {
+    padding: 10px; /* Reduz o padding */
+    width: 100%; /* Garante que ocupe toda a largura */
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: center;
+    padding: 5px; /* Reduz o padding para dispositivos móveis */
+  }
+
+  .compact-controls {
+    flex-direction: column;
+    gap: 8px; /* Reduz o espaçamento entre os elementos */
+  }
+
+  .compact-controls button,
+  .compact-controls input[type="number"] {
+    width: 100%; /* Expande para a largura total em telas pequenas */
+  }
+
+  .chart-container {
+    padding: 10px; /* Ajusta o padding */
+    flex-direction: column;
+  }
+
+  .line-chart {
+    width: 100%; /* Usa toda a largura da tela */
+    height: auto; /* Ajusta a altura automaticamente */
+  }
+
+  .bottom-section {
+    padding: 10px; /* Ajusta o padding para economizar espaço */
+  }
+
+  .charts-info-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .pie-chart-container {
+    width: 100%; /* Ajusta a largura para caber na tela */
+    height: auto; /* Altura ajustada automaticamente */
+    margin-bottom: 20px; /* Espaço entre o gráfico e a tabela */
+  }
+
+  .info-table {
+    width: 100%; /* Ajusta a tabela para a largura total */
+    padding: 10px;
+  }
+
+  .info-table th, .info-table td {
+    padding: 8px; /* Reduz o padding das células */
+  }
+
+  .performance-indicators {
+    padding: 10px;
+  }
+
+  .titulo-simulacao {
+    font-size: 1.5rem; /* Reduz o tamanho da fonte para telas menores */
+    margin-bottom: 10px;
+  }
+}

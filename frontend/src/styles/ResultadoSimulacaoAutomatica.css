@@ -47,3 +47,30 @@ h1 {
 .simulation-info ul li {
   margin: 5px 0;
 }
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .resultado-simulacao-container {
+    padding: 15px; /* Reduz o padding para caber melhor em telas pequenas */
+  }
+
+  .charts-container {
+    flex-direction: column; /* Organiza os gráficos em coluna */
+    align-items: center;
+    width: 100%; /* Garante que ocupe toda a largura disponível */
+  }
+
+  .line-chart, .pie-chart {
+    width: 90%; /* Ajusta a largura dos gráficos para caber em uma coluna */
+    margin-bottom: 15px; /* Adiciona espaço entre os gráficos */
+  }
+
+  .simulation-info {
+    width: 100%; /* Usa a largura total para informações */
+    padding: 15px; /* Reduz o padding para telas pequenas */
+    font-size: 14px; /* Ajusta o tamanho da fonte para caber melhor */
+  }
+
+  .simulation-info h3 {
+    font-size: 1.2em; /* Reduz o tamanho do título para ocupar menos espaço */
+  }
+}

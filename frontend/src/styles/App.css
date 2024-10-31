@@ -1,12 +1,12 @@
 /* App.css */
 
 .App-header {
-  background-color: #ffffff; 
+  background-color: #ffffff;
   padding: 1em;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: fixed; /* Altere para position: fixed */
   top: 0; /* Mantém o header no topo da página */
   left: 0;
@@ -39,3 +39,42 @@ main {
   text-decoration: underline;
 }
 
+/* App.css */
+/* Estilos para o menu hamburguer */
+
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  margin-right: 1em;
+}
+
+.hamburger-line {
+  width: 25px;
+  height: 3px;
+  background-color: #333;
+  margin: 4px 0;
+}
+
+/* Menu escondido por padrão em telas pequenas */
+.navbar {
+  display: flex;
+  gap: 1em;
+}
+
+@media (max-width: 1024px) {
+  .hamburger-menu {
+    display: flex;
+  }
+  
+  .navbar {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .navbar.open {
+    display: flex;
+    align-items: center;
+  }
+}
