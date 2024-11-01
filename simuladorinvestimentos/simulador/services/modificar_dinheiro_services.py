@@ -1,10 +1,24 @@
-from datetime import datetime
 import pandas as pd
+
+from datetime import datetime
+
 from ..models import SimulacaoManual
 from ..utils import arredondar_para_baixo, ajustar_inflacao
 
 
 def modificar_dinheiro(simulacao_id, user, valor, ajustar_inflacao_flag):
+    """
+    Modifica o valor em dinheiro disponível em uma simulação manual, com a opção de ajuste pela inflação.
+
+    Args:
+        simulacao_id (int): ID da simulação manual.
+        user (User): Usuário autenticado realizando a operação.
+        valor (float): Valor a ser adicionado ou subtraído do valor em caixa.
+        ajustar_inflacao_flag (bool): Indicador de ajuste pela inflação.
+
+    Returns:
+        tuple: Mensagem de sucesso ou erro e status HTTP (200, 400, 404 ou 500).
+    """
     try:
         # Obtém a simulação correspondente
         simulacao = SimulacaoManual.objects.get(id=simulacao_id, usuario=user)
@@ -18,11 +32,11 @@ def modificar_dinheiro(simulacao_id, user, valor, ajustar_inflacao_flag):
         ipca_data = pd.DataFrame(ipca_data_json)
 
         # Verificar se 'Data' está nas colunas
-        if 'Data' in ipca_data.columns:
-            ipca_data['Data'] = pd.to_datetime(ipca_data['Data'])
-            ipca_data.set_index('Data', inplace=True)
-        else:
+        if 'Data' not in ipca_data.columns:
             return {'error': "A coluna 'Data' não está presente em ipca_data."}, 500
+
+        ipca_data['Data'] = pd.to_datetime(ipca_data['Data'])
+        ipca_data.set_index('Data', inplace=True)
 
         coluna_ipca = "Valor"
         periodo_inicial = datetime.today().date()

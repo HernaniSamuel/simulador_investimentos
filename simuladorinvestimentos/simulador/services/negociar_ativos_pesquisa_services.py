@@ -1,14 +1,29 @@
 import yfinance as yf
+
 from django.shortcuts import get_object_or_404
-from ..models import SimulacaoManual
+
 from datetime import datetime
+
+from ..models import SimulacaoManual
 
 
 def pesquisar_ativo(ticker, simulacao_id):
+    """
+    Realiza a pesquisa do histórico de um ativo específico em uma simulação.
+
+    Args:
+        ticker (str): Ticker do ativo a ser pesquisado.
+        simulacao_id (int): ID da simulação manual associada.
+
+    Returns:
+        tuple: Dados da resposta e status HTTP (200 em caso de sucesso, 404 ou 500 em caso de falha).
+    """
     try:
         # Busca a simulação pelo ID fornecido
         simulacao = get_object_or_404(SimulacaoManual, id=simulacao_id)
-        data_atual_simulacao = simulacao.mes_atual.date() if isinstance(simulacao.mes_atual, datetime) else simulacao.mes_atual
+        data_atual_simulacao = (
+            simulacao.mes_atual.date() if isinstance(simulacao.mes_atual, datetime) else simulacao.mes_atual
+        )
 
         # Busca o histórico do ativo usando o yfinance com preços não ajustados
         ativo = yf.Ticker(ticker)

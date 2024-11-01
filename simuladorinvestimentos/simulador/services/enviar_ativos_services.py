@@ -1,11 +1,22 @@
 import json
 import yfinance as yf
+
 from dateutil.relativedelta import relativedelta
-from ..models import CarteiraAutomatica, SimulacaoAutomatica, Ativo
+
 from ..utils import arredondar_para_baixo
+from ..models import CarteiraAutomatica, SimulacaoAutomatica, Ativo
 
 
 def enviar_ativos_para_carteira(data):
+    """
+    Envia ativos para a carteira automática com base nos dados fornecidos.
+
+    Args:
+        data (dict): Dicionário contendo os dados necessários, incluindo carteira_id, simulacao_id, e ativos.
+
+    Returns:
+        tuple: Mensagem de sucesso ou erro e status HTTP (200, 400, 404).
+    """
     carteira_id = data.get('carteira_id')
     simulacao_id = data.get('simulacao_id')
 
@@ -30,12 +41,11 @@ def enviar_ativos_para_carteira(data):
     for item in data['ativos']:
         ticker = item['ticker']
         peso = item['peso']
-        print(f"Processando ativo: {ticker} com peso {peso}")
 
         # Obtendo informações do ativo
         ativo_info = yf.Ticker(ticker).info
-        nome = ativo_info['longName']
-        moeda_ativo = ativo_info['currency']
+        nome = ativo_info.get('longName', ticker)
+        moeda_ativo = ativo_info.get('currency', 'USD')
 
         # Converter strings de data em objetos datetime
         data_inicial = simulacao_automatica.data_inicial
@@ -58,8 +68,6 @@ def enviar_ativos_para_carteira(data):
 
         # Se a moeda do ativo for diferente da moeda da carteira, faça a conversão
         if moeda_ativo != moeda_carteira:
-            print(f"Convertendo preços de {moeda_ativo} para {moeda_carteira}")
-
             # Verificar se o câmbio já está no cache
             if moeda_ativo in cambio_cache:
                 cambio_df = cambio_cache[moeda_ativo]
@@ -86,7 +94,7 @@ def enviar_ativos_para_carteira(data):
             posse=0,
             nome=nome,
             precos=json.dumps(precos),
-            ultimo_preco_convertido=0.00, # Não usado pela simulação automática
+            ultimo_preco_convertido=0.00,  # Não usado pela simulação automática
             data_lancamento=data_lancamento  # Salvando a data de lançamento do ativo
         )
         carteira_automatica.ativos.add(ativo)

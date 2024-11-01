@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 
 
 class Ativo(models.Model):
+    """
+    Representa um ativo financeiro, contendo informações como ticker, nome, peso e posse.
+    """
     ticker = models.CharField(max_length=50)
     nome = models.CharField(max_length=100)
     peso = models.FloatField()
@@ -16,6 +19,9 @@ class Ativo(models.Model):
 
 
 class CarteiraAutomatica(models.Model):
+    """
+    Representa uma carteira automática de ativos.
+    """
     ativos = models.ManyToManyField(Ativo)
     valor_em_dinheiro = models.FloatField()
     valor_ativos = models.FloatField()
@@ -26,13 +32,16 @@ class CarteiraAutomatica(models.Model):
 
 
 class SimulacaoAutomatica(models.Model):
+    """
+    Representa uma simulação automática de investimentos.
+    """
     nome = models.CharField(max_length=100)
     data_inicial = models.DateField()
     data_final = models.DateField()
     aplicacao_inicial = models.FloatField()
     aplicacao_mensal = models.FloatField()
     carteira_automatica = models.OneToOneField(CarteiraAutomatica, on_delete=models.CASCADE)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # Para relacionar a simulação ao usuário
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     inflacao_total = models.JSONField(default=dict)
     resultados = models.JSONField(default=dict)
 
@@ -41,6 +50,9 @@ class SimulacaoAutomatica(models.Model):
 
 
 class CarteiraManual(models.Model):
+    """
+    Representa uma carteira manual de ativos.
+    """
     ativos = models.ManyToManyField(Ativo)
     valor_em_dinheiro = models.FloatField()
     valor_ativos = models.FloatField()
@@ -51,7 +63,10 @@ class CarteiraManual(models.Model):
 
 
 class SimulacaoManual(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # Para relacionar a simulação ao usuário
+    """
+    Representa uma simulação manual de investimentos.
+    """
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100)
     data_inicial = models.DateField()
     mes_atual = models.DateTimeField()
@@ -61,9 +76,12 @@ class SimulacaoManual(models.Model):
 
 
 class Historico(models.Model):
+    """
+    Representa o histórico de simulações de um usuário.
+    """
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    simulacoes_automaticas = models.ManyToManyField(SimulacaoAutomatica, blank=True)  # Relacionamento para Simulação Automática
-    simulacoes_manuais = models.ManyToManyField(SimulacaoManual, blank=True)  # Relacionamento para Simulação Manual
+    simulacoes_automaticas = models.ManyToManyField(SimulacaoAutomatica, blank=True)
+    simulacoes_manuais = models.ManyToManyField(SimulacaoManual, blank=True)
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
