@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
-      <change afterPath="$PROJECT_DIR$/frontend/src/images/ajuste_poder_compra.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/images/avanco_mes.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/images/formula_calculo_dividendos.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/images/formula_calculo_peso.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/images/formula_compra_venda.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/images/formula_valor_em_posse.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simuladorinvestimentos/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bfg.jar" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
