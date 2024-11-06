@@ -165,7 +165,7 @@ const SimulacaoManual = () => {
     },
     series: [
       {
-        name: 'Ativos',
+        name: 'Peso',
         data: pieData,
       },
     ],

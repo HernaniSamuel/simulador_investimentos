@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+
 import '../styles/App.css';
+
 import imagemReversao from '../images/regressao_poder_compra.png';
 import imagemValorCompra from '../images/formula_valor_compra.png';
 import imagemFormulaCompra from '../images/formula_compra_ativos.png';
 import imagemValorTotal from '../images/descobrir_valor_total.png';
+
+import imagemAjusteCompra from '../images/ajuste_poder_compra.png';
+import imagemCompraVenda from '../images/formula_compra_venda.png';
+import imagemValorPosse from '../images/formula_valor_em_posse.png';
+import imagemCalculoPeso from '../images/formula_calculo_peso.png';
+import imagemCalculoDividendos from '../images/formula_calculo_dividendos.png';
+import imagemAvancoMes from '../images/avanco_mes.png';
 
 
 
@@ -74,9 +83,27 @@ function App() {
             <h3>Compra fragmentada e rebalanceamento automático</h3>
             <p>Devido à lógica de compra fragmentada, que resulta na posse de ativos com várias casas decimais, o rebalanceamento da carteira de ações ocorre de forma automática e com precisão total a cada mês de simulação, eliminando a necessidade de ajustes manuais. Os dividendos são incorporados diretamente ao preço do ativo, refletindo seu impacto no valor total da carteira.</p>
             </div>
-            
-            {/* Conteúdo do tutorial */}
 
+            <h1>Tutorial da Simulação Manual</h1>
+            <p>A Simulação Manual foi criada para proporcionar uma liberdade sem precedentes na simulação de investimentos! Compre e venda ativos de todos os tipos e valores, de acordo com suas estratégias, e observe os dividendos entrando na conta. A única limitação? Um pouco mais de tempo e atenção do usuário, já que cada decisão é personalizada e controlada manualmente.</p>
+            <div className="video-wrapper">
+            <iframe width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/OPY40_OqWrk?si=bOzNi31Hu3VaOhlC" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen
+            ></iframe>
+            </div>
+            <h2>Detalhes técnicos</h2>
+            <img src={imagemAjusteCompra} alt="Descrição da imagem" className="responsive-image" />
+            <img src={imagemCompraVenda} alt="Descrição da imagem" className="responsive-image" />
+            <img src={imagemValorPosse} alt="Descrição da imagem" className="responsive-image" />
+            <img src={imagemCalculoPeso} alt="Descrição da imagem" className="responsive-image" />
+            <img src={imagemCalculoDividendos} alt="Descrição da imagem" className="responsive-image" />
+            <img src={imagemAvancoMes} alt="Descrição da imagem" className="responsive-image" />
           </div>
         )}
         <Outlet />
