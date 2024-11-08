@@ -1,6 +1,5 @@
 const config = {
-  backendUrl: 'http://127.0.0.1:8000'
+  backendUrl: '18.223.198.10'
 };
 
 export default config;
-git
