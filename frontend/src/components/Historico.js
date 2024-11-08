@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Historico.css';
+import config from '../config';
 
 const Historico = () => {
   const [historico, setHistorico] = useState([]);
@@ -11,7 +12,7 @@ const Historico = () => {
   useEffect(() => {
     const fetchHistorico = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/historico/', {
+        const response = await fetch(`${config}/api/historico/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -40,7 +41,7 @@ const Historico = () => {
 
   const handleDeleteManual = async (simulacaoId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/excluir_simulacao_manual/${simulacaoId}/`, {
+      const response = await fetch(`${config}/api/excluir_simulacao_manual/${simulacaoId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ const Historico = () => {
 
   const handleDeleteAutomatica = async (simulacaoId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/excluir_simulacao_automatica/${simulacaoId}/`, {
+      const response = await fetch(`${config}/api/excluir_simulacao_automatica/${simulacaoId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

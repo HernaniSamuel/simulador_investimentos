@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';  // Alterado para usar useParams
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import '../styles/AbrirSimulacaoAutomatica.css';
-
+import config from '../config'
 function AbrirSimulacaoAutomatica() {
   const { simulacaoId } = useParams();  // Obtenha o simulacaoId diretamente da URL
 
@@ -15,7 +15,7 @@ function AbrirSimulacaoAutomatica() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/abrir_simulacao_automatica/', {
+        const response = await fetch(`${config}/api/abrir_simulacao_automatica/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

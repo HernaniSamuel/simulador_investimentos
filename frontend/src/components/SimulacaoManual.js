@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
+import config from '../config';
 
 import '../styles/SimulacaoManual.css';
 
@@ -28,7 +29,7 @@ const SimulacaoManual = () => {
   const fetchSimulacaoData = async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/simulacao_manual/${simulacaoId}/`
+        `${config}/api/simulacao_manual/${simulacaoId}/`
       );
       const data = await response.json();
   
@@ -63,7 +64,7 @@ const SimulacaoManual = () => {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/modificar_dinheiro/${simulacaoId}/`,
+        `${config}/api/modificar_dinheiro/${simulacaoId}/`,
         {
           method: 'POST',
           headers: {
@@ -100,7 +101,7 @@ const SimulacaoManual = () => {
   
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/avancar_mes/${simulacaoId}/`,
+        `${config}/api/avancar_mes/${simulacaoId}/`,
         {
           method: 'POST',
           headers: {

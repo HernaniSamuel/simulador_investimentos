@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/PesquisarAtivo.css'; // Importando o CSS
+import config from '../config';
 
 const PesquisarAtivo = ({ adicionarAtivo }) => {
   const [ticker, setTicker] = useState('');
@@ -10,7 +11,7 @@ const PesquisarAtivo = ({ adicionarAtivo }) => {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/pesquisar_ativos/', {
+      const response = await fetch(`${config}/api/pesquisar_ativos/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

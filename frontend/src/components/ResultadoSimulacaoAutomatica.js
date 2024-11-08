@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import '../styles/ResultadoSimulacaoAutomatica.css';
+import config from '../config';
 
 function ResultadoSimulacaoAutomatica() {
   const location = useLocation();
@@ -16,7 +17,7 @@ function ResultadoSimulacaoAutomatica() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/resultado_simulacao_automatica/', {
+        const response = await fetch(`${config}/api/resultado_simulacao_automatica/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

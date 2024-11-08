@@ -1,6 +1,8 @@
 import React, { useState } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/NovaSimulacaoManual.css';
+import config from '../config';
+
 
 const NovaSimulacaoManual = () => {
   const [nome, setNome] = useState('');
@@ -20,7 +22,7 @@ const NovaSimulacaoManual = () => {
 
     const csrfToken = getCookie('csrftoken');
 
-    const response = await fetch('http://127.0.0.1:8000/api/nova_simulacao_manual/', {
+    const response = await fetch(`${config}/api/nova_simulacao_manual/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

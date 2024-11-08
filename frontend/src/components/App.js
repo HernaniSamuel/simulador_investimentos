@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
+import config from '../config';
+
 import '../styles/App.css';
 
 import imagemReversao from '../images/regressao_poder_compra.png';
@@ -55,7 +57,7 @@ function App() {
           <Link to="/novasimulacaoautomatica" className="nav-link" onClick={closeMenu}>Nova Simulação Automática</Link>
           <Link to="/novasimulacaomanual" className="nav-link" onClick={closeMenu}>Nova Simulação Manual</Link>
           <Link to="/historico" className="nav-link" onClick={closeMenu}>Histórico de Simulações</Link>
-          <a className="nav-link" href="http://127.0.0.1:8000/account/logout/">Logout</a>
+          <a className="nav-link" href={`${config}/account/logout/`}>Logout</a>
         </nav>
       </header>
       <main>

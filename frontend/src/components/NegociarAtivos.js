@@ -8,6 +8,8 @@ import priceIndicator from 'highcharts/modules/price-indicator';
 import fullScreen from 'highcharts/modules/full-screen';
 import '../styles/NegociarAtivos.css';
 
+import config from '../config';
+
 // Inicialize os módulos adicionais do Highcharts
 indicatorsAll(Highcharts);
 annotationsAdvanced(Highcharts);
@@ -47,7 +49,7 @@ const NegociarAtivos = () => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/negociar_ativos/${simulacaoId}/`, {
+      const response = await fetch(`${config}/api/negociar_ativos/${simulacaoId}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,7 +114,7 @@ const NegociarAtivos = () => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/buy_sell_actives/${simulacaoId}/`, {
+      const response = await fetch(`${config}/api/buy_sell_actives/${simulacaoId}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

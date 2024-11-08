@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/NegociarAtivosPesquisa.css';
+import config from '../config';
+
 
 const NegociarAtivosPesquisa = () => {
   const location = useLocation();
@@ -20,7 +22,7 @@ const NegociarAtivosPesquisa = () => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/negociar_ativos_pesquisa/${simulacaoId}/`, {
+      const response = await fetch(`${config}/api/negociar_ativos_pesquisa/${simulacaoId}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

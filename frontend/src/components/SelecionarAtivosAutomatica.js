@@ -4,6 +4,8 @@ import PesquisarAtivo from './PesquisarAtivo';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import '../styles/SelecionarAtivosAutomatica.css';
+import config from '../config';
+
 
 function SelecionarAtivosAutomatica() {
   const [ativos, setAtivos] = useState([]);
@@ -101,7 +103,7 @@ function SelecionarAtivosAutomatica() {
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/enviar_ativos/', {
+      const response = await fetch(`${config}/api/enviar_ativos/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

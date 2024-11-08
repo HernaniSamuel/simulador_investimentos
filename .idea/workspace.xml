@@ -5,7 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b392007-5d14-4107-b902-6ed17689f8be" name="Changes" comment="gitignore">
-      <change beforePath="$PROJECT_DIR$/bfg.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/AbrirSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AbrirSimulacaoAutomatica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Historico.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Historico.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/NegociarAtivos.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NegociarAtivos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/NegociarAtivosPesquisa.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NegociarAtivosPesquisa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoAutomatica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoManual.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/NovaSimulacaoManual.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/PesquisarAtivo.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/PesquisarAtivo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ResultadoSimulacaoAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ResultadoSimulacaoAutomatica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/SelecionarAtivosAutomatica.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SelecionarAtivosAutomatica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SimulacaoManual.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,8 +76,8 @@
       <recent name="C:\Users\hdini\PycharmProjects\simulador_investimentos" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\hdini\PycharmProjects\simulador_investimentos" />
       <recent name="C:\Users\hdini\PycharmProjects\simulador_investimentos\simuladorinvestimentos" />
+      <recent name="C:\Users\hdini\PycharmProjects\simulador_investimentos" />
     </key>
   </component>
   <component name="RunManager" selected="Python.dividendo">

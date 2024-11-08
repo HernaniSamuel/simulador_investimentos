@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/NovaSimulacaoAutomatica.css';
+import config from '../config';
 
 const NovaSimulacaoAutomatica = () => {
   const [nome, setNome] = useState('');
@@ -30,7 +31,7 @@ const NovaSimulacaoAutomatica = () => {
 
     const csrfToken = getCookie('csrftoken');
 
-    const response = await fetch('http://127.0.0.1:8000/api/nova_simulacao_automatica/', {
+    const response = await fetch(`${config}/api/nova_simulacao_automatica/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
