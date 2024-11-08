@@ -12,7 +12,7 @@ const Historico = () => {
   useEffect(() => {
     const fetchHistorico = async () => {
       try {
-        const response = await fetch(`${config}/api/historico/`, {
+        const response = await fetch(`${config.backendUrl}/api/historico/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ const Historico = () => {
 
   const handleDeleteManual = async (simulacaoId) => {
     try {
-      const response = await fetch(`${config}/api/excluir_simulacao_manual/${simulacaoId}/`, {
+      const response = await fetch(`${config.backendUrl}/api/excluir_simulacao_manual/${simulacaoId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ const Historico = () => {
 
   const handleDeleteAutomatica = async (simulacaoId) => {
     try {
-      const response = await fetch(`${config}/api/excluir_simulacao_automatica/${simulacaoId}/`, {
+      const response = await fetch(`${config.backendUrl}/api/excluir_simulacao_automatica/${simulacaoId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

@@ -103,7 +103,7 @@ function SelecionarAtivosAutomatica() {
     };
 
     try {
-      const response = await fetch(`${config}/api/enviar_ativos/`, {
+      const response = await fetch(`${config.backendUrl}/api/enviar_ativos/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

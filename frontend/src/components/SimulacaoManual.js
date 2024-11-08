@@ -29,7 +29,7 @@ const SimulacaoManual = () => {
   const fetchSimulacaoData = async () => {
     try {
       const response = await fetch(
-        `${config}/api/simulacao_manual/${simulacaoId}/`
+        `${config.backendUrl}/api/simulacao_manual/${simulacaoId}/`
       );
       const data = await response.json();
   
@@ -64,7 +64,7 @@ const SimulacaoManual = () => {
 
     try {
       const response = await fetch(
-        `${config}/api/modificar_dinheiro/${simulacaoId}/`,
+        `${config.backendUrl}/api/modificar_dinheiro/${simulacaoId}/`,
         {
           method: 'POST',
           headers: {
@@ -101,7 +101,7 @@ const SimulacaoManual = () => {
   
     try {
       const response = await fetch(
-        `${config}/api/avancar_mes/${simulacaoId}/`,
+        `${config.backendUrl}/api/avancar_mes/${simulacaoId}/`,
         {
           method: 'POST',
           headers: {

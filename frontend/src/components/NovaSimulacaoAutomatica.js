@@ -31,7 +31,7 @@ const NovaSimulacaoAutomatica = () => {
 
     const csrfToken = getCookie('csrftoken');
 
-    const response = await fetch(`${config}/api/nova_simulacao_automatica/`, {
+    const response = await fetch(`${config.backendUrl}/api/nova_simulacao_automatica/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

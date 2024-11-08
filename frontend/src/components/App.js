@@ -57,7 +57,7 @@ function App() {
           <Link to="/novasimulacaoautomatica" className="nav-link" onClick={closeMenu}>Nova Simulação Automática</Link>
           <Link to="/novasimulacaomanual" className="nav-link" onClick={closeMenu}>Nova Simulação Manual</Link>
           <Link to="/historico" className="nav-link" onClick={closeMenu}>Histórico de Simulações</Link>
-          <a className="nav-link" href={`${config}/account/logout/`}>Logout</a>
+          <a className="nav-link" href={`${config.backendUrl}/account/logout/`}>Logout</a>
         </nav>
       </header>
       <main>

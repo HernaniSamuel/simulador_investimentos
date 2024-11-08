@@ -22,7 +22,7 @@ const NegociarAtivosPesquisa = () => {
     }
 
     try {
-      const response = await fetch(`${config}/api/negociar_ativos_pesquisa/${simulacaoId}/`, {
+      const response = await fetch(`${config.backendUrl}/api/negociar_ativos_pesquisa/${simulacaoId}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

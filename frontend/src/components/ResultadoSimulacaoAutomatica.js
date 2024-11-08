@@ -17,7 +17,7 @@ function ResultadoSimulacaoAutomatica() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${config}/api/resultado_simulacao_automatica/`, {
+        const response = await fetch(`${config.backendUrl}/api/resultado_simulacao_automatica/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ const PesquisarAtivo = ({ adicionarAtivo }) => {
     e.preventDefault();
   
     try {
-      const response = await fetch(`${config}/api/pesquisar_ativos/`, {
+      const response = await fetch(`${config.backendUrl}/api/pesquisar_ativos/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

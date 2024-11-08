@@ -15,7 +15,7 @@ function AbrirSimulacaoAutomatica() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${config}/api/abrir_simulacao_automatica/`, {
+        const response = await fetch(`${config.backendUrl}/api/abrir_simulacao_automatica/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

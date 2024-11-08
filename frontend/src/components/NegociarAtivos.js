@@ -49,7 +49,7 @@ const NegociarAtivos = () => {
     }
 
     try {
-      const response = await fetch(`${config}/api/negociar_ativos/${simulacaoId}/`, {
+      const response = await fetch(`${config.backendUrl}/api/negociar_ativos/${simulacaoId}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ const NegociarAtivos = () => {
     }
 
     try {
-      const response = await fetch(`${config}/api/buy_sell_actives/${simulacaoId}/`, {
+      const response = await fetch(`${config.backendUrl}/api/buy_sell_actives/${simulacaoId}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
