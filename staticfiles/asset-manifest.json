@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.91cc724a.css",
+    "main.js": "/static/js/main.ee5c9262.js",
+    "static/js/453.8ab44547.chunk.js": "/static/js/453.8ab44547.chunk.js",
+    "static/media/ajuste_poder_compra.png": "/static/media/ajuste_poder_compra.918b1fb4e3c39224ab4b.png",
+    "static/media/regressao_poder_compra.png": "/static/media/regressao_poder_compra.cf496cb75b411a4bbc12.png",
+    "static/media/formula_compra_venda.png": "/static/media/formula_compra_venda.9c655ed2e33eebe0e6a5.png",
+    "static/media/formula_compra_ativos.png": "/static/media/formula_compra_ativos.c4dbc3b414f95d16b806.png",
+    "static/media/formula_valor_compra.png": "/static/media/formula_valor_compra.9ab142758ecd63a32f73.png",
+    "static/media/formula_valor_em_posse.png": "/static/media/formula_valor_em_posse.743507ee46e211f3da2e.png",
+    "static/media/avanco_mes.png": "/static/media/avanco_mes.55f7d21c29abada2e509.png",
+    "static/media/descobrir_valor_total.png": "/static/media/descobrir_valor_total.e3918a062610026afaa9.png",
+    "static/media/formula_calculo_peso.png": "/static/media/formula_calculo_peso.2ddd802fca5162375033.png",
+    "static/media/formula_calculo_dividendos.png": "/static/media/formula_calculo_dividendos.bc4beaeb85c40d3f3475.png",
+    "index.html": "/index.html",
+    "main.91cc724a.css.map": "/static/css/main.91cc724a.css.map",
+    "main.ee5c9262.js.map": "/static/js/main.ee5c9262.js.map",
+    "453.8ab44547.chunk.js.map": "/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.91cc724a.css",
+    "static/js/main.ee5c9262.js"
+  ]
+}
