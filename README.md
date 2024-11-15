@@ -11,30 +11,54 @@
     <li>Banco de Dados: PostgreSQL</li>
     <li>Containerização: Docker</li>
 </ul>
-<h2>Como Executar</h2>
-<ol>
-    <li>Clone este repositório: <code>git clone https://github.com/HernaniSamuel/simulador_investimentos</code></li>
-    <li>Certifique-se de ter o Docker instalado.</li>
-    <li>Execute o comando para subir os contêineres:
-        <pre><code>docker-compose up</code></pre>
-    </li>
-</ol>
 <h2>Link para Acessar a Aplicação</h2>
 <p>
     A aplicação está hospedada na AWS e pode ser acessada pelo seguinte endereço: <br>
     <a href="http://18.223.198.10:8000" target="_blank">http://18.223.198.10:8000</a>
 </p>
-<h2>Tutorial de Login</h2>
+<h2>Tutorial de Cadastro e Login</h2>
+
+<h2>Como se cadastrar</h2>
 <ol>
-    <li>Acesse o sistema através da URL informada.</li>
-    <li>Na tela inicial, clique no botão <strong>"Login"</strong>.</li>
-    <li>Insira suas credenciais:
+    <li>Acesse o sistema através da URL: <a href="http://18.223.198.10:8000/account/login/" target="_blank">Página de Login</a>.</li>
+    <li>Na página de login, clique no link <strong>"Sign up first"</strong>.</li>
+    <li>Na página de cadastro:
         <ul>
-            <li><strong>Usuário:</strong> admin (ou o seu e-mail cadastrado)</li>
-            <li><strong>Senha:</strong> senha previamente configurada</li>
+            <li>Preencha o campo <strong>Email</strong> com um endereço de e-mail válido.</li>
+            <li>Escolha um <strong>Username</strong> (nome de usuário único).</li>
+            <li>Defina uma <strong>Password</strong> (senha) que atenda aos requisitos exibidos na página, como no mínimo 8 caracteres.</li>
+            <li>Confirme a senha no campo <strong>Password (again)</strong>.</li>
         </ul>
     </li>
-    <li>Clique em <strong>"Entrar"</strong>.</li>
-    <li>Após o login, você será redirecionado para a página principal do sistema.</li>
+    <li>Clique no botão <strong>"Sign Up"</strong>.</li>
+    <li>Após o cadastro, uma mensagem será exibida solicitando a verificação do endereço de e-mail.</li>
 </ol>
 
+<h2>Como verificar o e-mail</h2>
+<ol>
+    <li>Acesse o e-mail usado no cadastro e procure pela mensagem enviada pelo sistema (<em>simuladordeinvestimentos</em>).</li>
+    <li>Abra o e-mail e clique no link de verificação fornecido.</li>
+    <li>Na página aberta, clique no botão <strong>"Confirm"</strong> para concluir a verificação.</li>
+    <li>Após a verificação, você será redirecionado para a página principal do sistema.</li>
+</ol>
+
+<h2>Como fazer login</h2>
+<ol>
+    <li>Acesse a página de login: <a href="http://18.223.198.10:8000/account/login/" target="_blank">Página de Login</a>.</li>
+    <li>Insira suas credenciais:
+        <ul>
+            <li><strong>Login:</strong> Seu e-mail ou nome de usuário cadastrado.</li>
+            <li><strong>Senha:</strong> A senha definida no cadastro.</li>
+        </ul>
+    </li>
+    <li>Marque a opção <strong>"Remember Me"</strong> se desejar manter-se conectado.</li>
+    <li>Clique no botão <strong>"Sign In"</strong>.</li>
+    <li>Após o login, você será redirecionado para a página inicial do sistema, onde poderá acessar todas as funcionalidades.</li>
+</ol>
+
+<h2>Dicas Importantes</h2>
+<ul>
+    <li>Certifique-se de usar um e-mail válido para receber o link de confirmação.</li>
+    <li>Verifique sua caixa de spam caso o e-mail de verificação não apareça na caixa de entrada.</li>
+    <li>Guarde suas credenciais em um local seguro.</li>
+</ul>
