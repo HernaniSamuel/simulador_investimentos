@@ -11,11 +11,7 @@
     <li>Banco de Dados: PostgreSQL</li>
     <li>Containerização: Docker</li>
 </ul>
-<h2>Link para Acessar a Aplicação</h2>
-<p>
-    A aplicação está hospedada na AWS e pode ser acessada pelo seguinte endereço: <br>
-    <a href="http://18.223.198.10:8000" target="_blank">http://18.223.198.10:8000</a>
-</p>
+
 <h2>Tutorial de Cadastro e Login</h2>
 
 <h2>Como se cadastrar</h2>
@@ -44,7 +40,7 @@
 
 <h2>Como fazer login</h2>
 <ol>
-    <li>Acesse a página de login: <a href="http://18.223.198.10:8000/account/login/" target="_blank">Página de Login</a>.</li>
+    <li>Acesse a página de login: <removido do ar></li>
     <li>Insira suas credenciais:
         <ul>
             <li><strong>Login:</strong> Seu e-mail ou nome de usuário cadastrado.</li>
@@ -62,3 +58,4 @@
     <li>Verifique sua caixa de spam caso o e-mail de verificação não apareça na caixa de entrada.</li>
     <li>Guarde suas credenciais em um local seguro.</li>
 </ul>
+
